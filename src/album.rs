@@ -98,6 +98,7 @@ impl std::fmt::Display for Album {
 ///
 /// A Homogeneous--i.e., uniform--stack of Items.
 ///
+/* 
 #[derive(Clone, Debug, Hash, PartialEq)]
 pub struct AlbumList {
     ///
@@ -119,7 +120,7 @@ impl Default for AlbumList {
         Self::new(Album::default(), 0)
     }
 }
-
+*/
 /*impl ItemStack {
     ///
     /// Create a stack of the desired type.
