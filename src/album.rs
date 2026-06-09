@@ -1,8 +1,6 @@
 ///
-/// Item represents an individual Item in an inventory.
-/// This includes items such as potions, building materials, and food.
-///
-/// Only one of each item can exist--i.e., no two items share the
+/// Album represents an individual Album in a list.
+/// Only one of each album can exist--i.e., no two albums share the
 /// same numeric id.
 ///
 #[derive(Clone, Debug, Hash, PartialEq)]
@@ -101,11 +99,11 @@ impl std::fmt::Display for Album {
 /// A Homogeneous--i.e., uniform--stack of Items.
 ///
 #[derive(Clone, Debug, Hash, PartialEq)]
-pub struct ItemStack {
+pub struct AlbumList {
     ///
     /// The specific type of item out of which this stack is built.
     ///
-    item: Item,
+    cd: Album,
 
     ///
     /// Represents the number of items in this stack.
@@ -113,16 +111,16 @@ pub struct ItemStack {
     quantity: usize,
 }
 
-impl Default for ItemStack {
+impl Default for AlbumList {
     ///
     /// Create an empty stack composed of Air.
     ///
     fn default() -> Self {
-        Self::new(Item::default(), 0)
+        Self::new(Album::default(), 0)
     }
 }
 
-impl ItemStack {
+/*impl ItemStack {
     ///
     /// Create a stack of the desired type.
     ///
@@ -134,7 +132,7 @@ impl ItemStack {
     ///
     pub fn new(base: Item, qty: usize) -> Self {
         Self {
-            item: base,
+            cd: base,
             quantity: qty,
         }
     }
@@ -183,7 +181,7 @@ impl ItemStack {
     ///
     pub fn permits_stacking(&self) -> bool {
         // For now... no albums are stackable
-        return false;
+        return true;
     }
 }
 
@@ -194,3 +192,4 @@ impl std::fmt::Display for ItemStack {
         Ok(())
     }
 }
+    */
