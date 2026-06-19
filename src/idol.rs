@@ -1,3 +1,5 @@
+use crate::enums::Language;
+
 
 
 
@@ -44,9 +46,4 @@ pub enum NameType {
     ChineseName,
     Nickname,
 }
-pub enum Language {
-    Hangul,
-    Latin,
-    Japanese,
-    Mandarin,
-}
+

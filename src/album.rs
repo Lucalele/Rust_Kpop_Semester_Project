@@ -1,5 +1,7 @@
 use chrono::NaiveDate;
 
+use crate::enums::Language;
+
 pub struct Album {
     pub album_id: u32,
     pub title: String,
@@ -11,11 +13,6 @@ pub struct Album {
 
 
 
-pub enum Language {
-    Hangul,
-    Latin,
-    Japanese,
-    Mandarin,
-}
+
 
 
