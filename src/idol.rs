@@ -36,3 +36,17 @@ pub enum Gender {
     Female,
 }
 
+pub enum NameType {
+    StageName,
+    BirthName,
+    EnglishName,
+    JapaneseName,
+    ChineseName,
+    Nickname,
+}
+pub enum Language {
+    Hangul,
+    Latin,
+    Japanese,
+    Mandarin,
+}
