@@ -1,8 +1,5 @@
 use crate::enums::Language;
 
-
-
-
 pub struct Idol{
     pub idol_id: u32,
 
