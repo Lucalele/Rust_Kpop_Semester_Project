@@ -6,6 +6,6 @@ edition = "2024"
 [dependencies]
 chrono = "0.4.45"
 csv = "1.4.0"
-diesel = { version = "2.3.10", features = ["sqlite"] }
+diesel = { version = "2.3.10", features = ["sqlite", "chrono"] }
 dotenv = "0.15.0"
 rand = "0.8"
