@@ -1,1 +1,3 @@
 Design Philosophy: This application intentionally does not validate K-pop data against external sources. It functions as a user-managed collection database. This allows support for newly debuted artists, independent artists, fictional groups, unreleased projects, and user-defined organizations without requiring database updates.
+
+This application is optimized for K-pop collections but can be adapted to catalog other artists by leaving K-pop-specific information blank or unused.
