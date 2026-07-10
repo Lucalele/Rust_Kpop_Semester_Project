@@ -1,10 +1,8 @@
-use crate::enums::Language;
-
 pub struct Idol {
     pub idol_id: i32,
 
     // NOT the same as group gender
-    pub idol_gender: Gender,
+    pub idol_gender: String,
 
     // Groups the idol is/was in
     pub group_ids: Vec<i32>,
@@ -20,33 +18,18 @@ pub struct Idol {
 
     // Optional, mostly for filtering
     pub company_ids: Vec<i32>,
+
+    // Optional, mostly for filtering
     pub label_ids: Vec<i32>,
 }
 
 pub struct IdolName {
+    // Unique ID for this specific name
     pub idol_name_id: i32,
+
+    // Connects every name back to the same idol
     pub idol_id: i32,
-    pub display_name: String,
-    pub language: Language,
-    pub name_type: NameType,
-}
 
-pub struct NameAlias {
-    pub idol_alias_id: i32,
-    pub idol_id: i32,
-    pub alias: String,
-}
-
-pub enum Gender {
-    Male,
-    Female,
-}
-
-pub enum NameType {
-    StageName,
-    BirthName,
-    EnglishName,
-    JapaneseName,
-    ChineseName,
-    Nickname,
+    // Exact name used to identify the idol
+    pub name: String,
 }
