@@ -20,7 +20,7 @@ pub struct Idol {
     pub idol_gender: String,
 
     // If true, they can have solo albums
-    pub is_soloist: bool,
+    pub is_soloist: Option<bool>,
 }
 
 #[derive(Debug, Queryable, Selectable, Identifiable, Associations)]
