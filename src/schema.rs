@@ -5,8 +5,8 @@ diesel::table! {
         album_id -> Integer,
         title -> Text,
         artist_id -> Integer,
-        release_date -> Date,
-        language -> Text,
+        release_date -> Nullable<Date>,
+        language -> Nullable<Text>,
         version -> Nullable<Text>,
     }
 }
@@ -50,7 +50,7 @@ diesel::table! {
     idol_groups (group_id) {
         group_id -> Integer,
         group_name -> Text,
-        debut_date -> Date,
+        debut_date -> Nullable<Date>,
         gender -> Text,
     }
 }
@@ -88,7 +88,7 @@ diesel::table! {
     idols (idol_id) {
         idol_id -> Integer,
         idol_gender -> Text,
-        is_soloist -> Bool,
+        is_soloist -> Nullable<Bool>,
     }
 }
 
@@ -111,7 +111,7 @@ diesel::table! {
     project_groups (project_group_id) {
         project_group_id -> Integer,
         project_group_name -> Text,
-        debut_date -> Date,
+        debut_date -> Nullable<Date>,
         gender -> Text,
     }
 }
@@ -121,7 +121,7 @@ diesel::table! {
         subunit_id -> Integer,
         subunit_name -> Text,
         parent_group_id -> Integer,
-        debut_date -> Date,
+        debut_date -> Nullable<Date>,
         gender -> Text,
     }
 }
