@@ -1,4 +1,18 @@
+use diesel::prelude::*;
 
+use crate::schema::{
+    idol_companies,
+    idol_group_memberships,
+    idol_labels,
+    idol_names,
+    idol_project_group_memberships,
+    idol_subunit_memberships,
+    idols,
+};
+
+#[derive(Debug, Queryable, Selectable, Identifiable)]
+#[diesel(table_name = idols)]
+#[diesel(primary_key(idol_id))]
 pub struct Idol {
     pub idol_id: i32,
 
@@ -9,6 +23,10 @@ pub struct Idol {
     pub is_soloist: bool,
 }
 
+#[derive(Debug, Queryable, Selectable, Identifiable, Associations)]
+#[diesel(table_name = idol_names)]
+#[diesel(primary_key(idol_name_id))]
+#[diesel(belongs_to(Idol, foreign_key = idol_id))]
 pub struct IdolName {
     // Unique ID for this specific name
     pub idol_name_id: i32,
@@ -20,43 +38,42 @@ pub struct IdolName {
     pub name: String,
 }
 
-pub struct IdolGroup {
-    // Idol connected to the group
+#[derive(Debug, Queryable, Selectable, Identifiable)]
+#[diesel(table_name = idol_group_memberships)]
+#[diesel(primary_key(idol_id, group_id))]
+pub struct IdolGroupMembership {
     pub idol_id: i32,
-
-    // Group the idol is/was in
     pub group_id: i32,
 }
 
-pub struct IdolSubunit {
-    // Idol connected to the subunit
+#[derive(Debug, Queryable, Selectable, Identifiable)]
+#[diesel(table_name = idol_subunit_memberships)]
+#[diesel(primary_key(idol_id, subunit_id))]
+pub struct IdolSubunitMembership {
     pub idol_id: i32,
-
-    // Subunit the idol is/was in
     pub subunit_id: i32,
 }
 
-pub struct IdolProjectGroup {
-    // Idol connected to the project group or collaboration
+#[derive(Debug, Queryable, Selectable, Identifiable)]
+#[diesel(table_name = idol_project_group_memberships)]
+#[diesel(primary_key(idol_id, project_group_id))]
+pub struct IdolProjectGroupMembership {
     pub idol_id: i32,
-
-    // Project group/collaboration the idol is/was in
     pub project_group_id: i32,
 }
 
+#[derive(Debug, Queryable, Selectable, Identifiable)]
+#[diesel(table_name = idol_companies)]
+#[diesel(primary_key(idol_id, company_id))]
 pub struct IdolCompany {
-    // Idol connected to the company
     pub idol_id: i32,
-
-    // Company associated with the idol
     pub company_id: i32,
 }
 
+#[derive(Debug, Queryable, Selectable, Identifiable)]
+#[diesel(table_name = idol_labels)]
+#[diesel(primary_key(idol_id, label_id))]
 pub struct IdolLabel {
-    // Idol connected to the label
     pub idol_id: i32,
-
-    // Label associated with the idol
     pub label_id: i32,
 }
-
