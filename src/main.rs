@@ -6,7 +6,8 @@ pub mod idol;
 pub mod schema;
 
 fn main() {
-    let _connection = database::establish_connection();
+    // 0 opens the special main database from .env
+    let _connection = database::establish_selected_connection(0);
 
-    println!("Connected to database.");
+    println!("Connected to main database.");
 }

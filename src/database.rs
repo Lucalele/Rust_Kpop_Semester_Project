@@ -69,3 +69,23 @@ pub fn establish_database_7_connection() -> SqliteConnection {
         panic!("Could not connect to {database_url}: {error}");
     })
 }
+
+pub fn establish_selected_connection(database_number: u8) -> SqliteConnection {
+    match database_number {
+        // Special main archive, configured through .env
+        0 => establish_connection(),
+
+        // User-created rotation databases
+        1 => establish_database_1_connection(),
+        2 => establish_database_2_connection(),
+        3 => establish_database_3_connection(),
+        4 => establish_database_4_connection(),
+        5 => establish_database_5_connection(),
+        6 => establish_database_6_connection(),
+        7 => establish_database_7_connection(),
+
+        _ => panic!(
+            "Invalid database number: {database_number}. Use 0 through 7."
+        ),
+    }
+}
