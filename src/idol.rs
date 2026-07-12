@@ -77,3 +77,17 @@ pub struct IdolLabel {
     pub idol_id: i32,
     pub label_id: i32,
 }
+
+#[derive(Debug, Insertable)]
+#[diesel(table_name = idols)]
+pub struct NewIdol<'a> {
+    pub idol_gender: &'a str,
+    pub is_soloist: bool,
+}
+
+#[derive(Debug, Insertable)]
+#[diesel(table_name = idol_names)]
+pub struct NewIdolName<'a> {
+    pub idol_id: i32,
+    pub name: &'a str,
+}
