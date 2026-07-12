@@ -10,8 +10,8 @@ pub struct Album {
     pub album_id: i32,
     pub title: String,
     pub artist_id: i32,
-    pub release_date: NaiveDate,
-    pub language: String,
+    pub release_date: Option<NaiveDate>,
+    pub language: Option<String>,
     pub version: Option<String>,
 }
 
@@ -20,7 +20,7 @@ pub struct Album {
 pub struct NewAlbum<'a> {
     pub title: &'a str,
     pub artist_id: i32,
-    pub release_date: NaiveDate,
-    pub language: &'a str,
+    pub release_date: Option<NaiveDate>,
+    pub language: Option<&'a str>,
     pub version: Option<&'a str>,
 }
