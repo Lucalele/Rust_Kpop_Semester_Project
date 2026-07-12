@@ -27,6 +27,30 @@ pub struct ProjectGroup {
     pub gender: GroupGender,
 }
 
+pub struct GroupCompany {
+    // Group associated with the company
+    pub group_id: i32,
+
+    // Company associated with the group
+    pub company_id: i32,
+}
+
+pub struct GroupLabel {
+    // Group associated with the label
+    pub group_id: i32,
+
+    // Label associated with the group
+    pub label_id: i32,
+}
+
+pub struct ProjectGroupParent {
+    // Project group
+    pub project_group_id: i32,
+
+    // Parent group connected to the project group
+    pub parent_group_id: i32,
+}
+
 pub enum GroupGender {
     Male,
     Female,
