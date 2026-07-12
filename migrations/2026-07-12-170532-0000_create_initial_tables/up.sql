@@ -19,7 +19,7 @@ CREATE TABLE labels (
 CREATE TABLE idols (
     idol_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
     idol_gender TEXT NOT NULL,
-    is_soloist BOOLEAN NOT NULL
+    is_soloist BOOLEAN
 );
 
 CREATE TABLE idol_names (
@@ -37,7 +37,7 @@ CREATE TABLE idol_names (
 CREATE TABLE idol_groups (
     group_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
     group_name TEXT NOT NULL,
-    debut_date DATE NOT NULL,
+    debut_date DATE,
 
     gender TEXT NOT NULL
         CHECK (gender IN ('Male', 'Female', 'CoEd'))
@@ -47,7 +47,7 @@ CREATE TABLE subunits (
     subunit_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
     subunit_name TEXT NOT NULL,
     parent_group_id INTEGER NOT NULL,
-    debut_date DATE NOT NULL,
+    debut_date DATE,
 
     gender TEXT NOT NULL
         CHECK (gender IN ('Male', 'Female', 'CoEd')),
@@ -60,7 +60,7 @@ CREATE TABLE subunits (
 CREATE TABLE project_groups (
     project_group_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
     project_group_name TEXT NOT NULL,
-    debut_date DATE NOT NULL,
+    debut_date DATE,
 
     gender TEXT NOT NULL
         CHECK (gender IN ('Male', 'Female', 'CoEd'))
@@ -70,8 +70,8 @@ CREATE TABLE albums (
     album_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
     title TEXT NOT NULL,
     artist_id INTEGER NOT NULL,
-    release_date DATE NOT NULL,
-    language TEXT NOT NULL,
+    release_date DATE,
+    language TEXT,
     version TEXT
 );
 

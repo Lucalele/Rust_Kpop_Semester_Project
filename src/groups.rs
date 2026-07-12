@@ -15,8 +15,8 @@ use crate::schema::{
 #[diesel(primary_key(group_id))]
 pub struct IdolGroup {
     pub group_id: i32,
-    pub group_name: String,
-    pub debut_date: NaiveDate,
+    pub group_name: Option<String>,
+    pub debut_date: Option<NaiveDate>,
     pub gender: String,
 }
 
@@ -24,7 +24,7 @@ pub struct IdolGroup {
 #[diesel(table_name = idol_groups)]
 pub struct NewIdolGroup<'a> {
     pub group_name: &'a str,
-    pub debut_date: NaiveDate,
+    pub debut_date: Option<NaiveDate>,
     pub gender: &'a str,
 }
 
@@ -39,7 +39,7 @@ pub struct Subunit {
     // A subunit always belongs to exactly one parent group
     pub parent_group_id: i32,
 
-    pub debut_date: NaiveDate,
+    pub debut_date: Option<NaiveDate>,
 
     // Restricted by the database to Male, Female, or CoEd
     pub gender: String,
@@ -50,7 +50,7 @@ pub struct Subunit {
 pub struct NewSubunit<'a> {
     pub subunit_name: &'a str,
     pub parent_group_id: i32,
-    pub debut_date: NaiveDate,
+    pub debut_date: Option<NaiveDate>,
     pub gender: &'a str,
 }
 
@@ -60,7 +60,7 @@ pub struct NewSubunit<'a> {
 pub struct ProjectGroup {
     pub project_group_id: i32,
     pub project_group_name: String,
-    pub debut_date: NaiveDate,
+    pub debut_date: Option<NaiveDate>,
     pub gender: String,
 }
 
@@ -68,7 +68,7 @@ pub struct ProjectGroup {
 #[diesel(table_name = project_groups)]
 pub struct NewProjectGroup<'a> {
     pub project_group_name: &'a str,
-    pub debut_date: NaiveDate,
+    pub debut_date: Option<NaiveDate>,
     pub gender: &'a str,
 }
 

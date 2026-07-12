@@ -82,7 +82,7 @@ pub struct IdolLabel {
 #[diesel(table_name = idols)]
 pub struct NewIdol<'a> {
     pub idol_gender: &'a str,
-    pub is_soloist: bool,
+    pub is_soloist: Option<bool>,
 }
 
 #[derive(Debug, Insertable)]
