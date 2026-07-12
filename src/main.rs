@@ -1,10 +1,12 @@
 pub mod album;
+pub mod companies;
+pub mod database;
 pub mod groups;
 pub mod idol;
-pub mod companies;
-
-
+pub mod schema;
 
 fn main() {
-    println!("Hello, world!");
+    let _connection = database::establish_connection();
+
+    println!("Connected to database.");
 }
