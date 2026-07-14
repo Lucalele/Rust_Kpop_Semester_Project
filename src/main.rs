@@ -4,7 +4,7 @@ pub mod database;
 pub mod groups;
 pub mod idol;
 pub mod schema;
-mod csv_import;
+//mod csv_import;
 
 fn main() {
     // 0 opens the special main database from .env
