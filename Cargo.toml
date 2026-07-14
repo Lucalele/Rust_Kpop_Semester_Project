@@ -10,3 +10,5 @@ diesel = { version = "2.3.10", features = ["sqlite", "chrono"] }
 libsqlite3-sys = { version = "0.37", features = ["bundled"] }
 dotenv = "0.15.0"
 rand = "0.8"
+csv = "1.4.0"
+serde = { version = "1", features = ["derive"] }
