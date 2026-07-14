@@ -15,7 +15,7 @@ use crate::schema::{
 #[diesel(primary_key(group_id))]
 pub struct IdolGroup {
     pub group_id: i32,
-    pub group_name: Option<String>,
+    pub group_name: String,
     pub debut_date: Option<NaiveDate>,
     pub gender: String,
 }

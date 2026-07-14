@@ -9,7 +9,7 @@ fn main() {
     // 0 opens the special main database from .env
     let _connection = database::establish_selected_connection(0);
 
-    println!("Connected to third rotation database.");
+    println!("Connected to main database");
 
 
 }
