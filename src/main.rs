@@ -4,6 +4,7 @@ pub mod database;
 pub mod groups;
 pub mod idol;
 pub mod schema;
+pub mod csv_import;
 //mod csv_import;
 
 fn main() {
