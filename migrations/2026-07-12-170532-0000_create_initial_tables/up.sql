@@ -70,11 +70,23 @@ CREATE TABLE albums (
     album_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
     title TEXT NOT NULL,
     artist_id INTEGER NOT NULL,
+
+    artist_type TEXT NOT NULL
+        CHECK (
+            artist_type IN (
+                'Group',
+                'Subunit',
+                'ProjectGroup',
+                'Soloist'
+            )
+        ),
+
     release_date DATE,
     language TEXT,
-    version TEXT
-);
+    version TEXT,
 
+    UNIQUE (artist_id, artist_type, title, version)
+);
 CREATE TABLE idol_group_memberships (
     idol_id INTEGER NOT NULL,
     group_id INTEGER NOT NULL,

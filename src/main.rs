@@ -5,6 +5,7 @@ pub mod groups;
 pub mod idol;
 pub mod schema;
 pub mod csv_import;
+pub mod randomizer;
 
 fn main() {
     database::initialize_all_tape_decks();

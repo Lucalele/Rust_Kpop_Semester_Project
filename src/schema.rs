@@ -5,6 +5,7 @@ diesel::table! {
         album_id -> Integer,
         title -> Text,
         artist_id -> Integer,
+        artist_type -> Text,
         release_date -> Nullable<Date>,
         language -> Nullable<Text>,
         version -> Nullable<Text>,
