@@ -99,6 +99,7 @@ pub fn initialize_tape_deck(connection: &mut SqliteConnection) {
                 album_id INTEGER PRIMARY KEY AUTOINCREMENT,
                 title TEXT NOT NULL,
                 artist_id INTEGER NOT NULL,
+                artist_type TEXT NOT NULL,
                 release_date DATE,
                 language TEXT,
                 version TEXT
