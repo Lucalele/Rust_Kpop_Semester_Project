@@ -5,13 +5,9 @@ pub mod groups;
 pub mod idol;
 pub mod schema;
 pub mod csv_import;
-//mod csv_import;
 
 fn main() {
-    // 0 opens the special main database from .env
-    let _connection = database::establish_selected_connection(0);
+    database::initialize_all_tape_decks();
 
-    println!("Connected to main database");
-
-
+    println!("All seven tape decks are ready");
 }

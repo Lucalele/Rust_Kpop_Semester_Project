@@ -1,3 +1,4 @@
+use diesel::connection::SimpleConnection;
 use diesel::prelude::*;
 use diesel::sqlite::SqliteConnection;
 use dotenv::dotenv;
@@ -87,5 +88,35 @@ pub fn establish_selected_connection(database_number: u8) -> SqliteConnection {
         _ => panic!(
             "Invalid database number: {database_number}. Use 0 through 7."
         ),
+    }
+}
+
+pub fn initialize_tape_deck(connection: &mut SqliteConnection) {
+    connection
+        .batch_execute(
+            r#"
+            CREATE TABLE IF NOT EXISTS albums (
+                album_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                title TEXT NOT NULL,
+                artist_id INTEGER NOT NULL,
+                release_date DATE,
+                language TEXT,
+                version TEXT
+            );
+            "#,
+        )
+        .expect("Could not create albums table");
+}
+
+pub fn initialize_all_tape_decks() {
+    for database_number in 1..=7 {
+        let mut connection = establish_selected_connection(database_number);
+
+        initialize_tape_deck(&mut connection);
+
+        println!(
+            "Initialized database{}.sqlite with the albums table",
+            database_number
+        );
     }
 }
