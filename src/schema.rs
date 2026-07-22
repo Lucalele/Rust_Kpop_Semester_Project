@@ -13,14 +13,6 @@ diesel::table! {
 }
 
 diesel::table! {
-    albums_alt (album_id) {
-        album_id -> Nullable<Integer>,
-        title -> Text,
-        artist -> Integer,
-    }
-}
-
-diesel::table! {
     companies (company_id) {
         company_id -> Integer,
         company_name -> Text,
@@ -157,7 +149,6 @@ diesel::joinable!(subunits -> idol_groups (parent_group_id));
 
 diesel::allow_tables_to_appear_in_same_query!(
     albums,
-    albums_alt,
     companies,
     group_companies,
     group_labels,

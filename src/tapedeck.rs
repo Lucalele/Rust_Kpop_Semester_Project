@@ -1,6 +1,6 @@
 use diesel::prelude::*;
 
-use crate::schema::albums_alt;
+use crate::schema_tapedecks::albums_alt;
 
 #[derive(Debug, Queryable, Selectable, Identifiable)]
 #[diesel(table_name = albums_alt)]
