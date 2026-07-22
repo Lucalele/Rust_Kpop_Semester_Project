@@ -8,7 +8,7 @@ file = "src/schema.rs"
 custom_type_derives = ["diesel::query_builder::QueryId", "Clone"]
 
 [print_schema.tapedecks]
-file = "src/tschema_tapedecks.rs"
+file = "src/schema_tapedecks.rs"
 custom_type_derives = ["diesel::query_builder::QueryId", "Clone"]
 
 [migrations_directory]
