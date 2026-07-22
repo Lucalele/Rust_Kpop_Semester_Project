@@ -1,13 +1,8 @@
 use diesel::prelude::*;
 
 use crate::schema::{
-    idol_companies,
-    idol_group_memberships,
-    idol_labels,
-    idol_names,
-    idol_project_group_memberships,
-    idol_subunit_memberships,
-    idols,
+    idol_companies, idol_group_memberships, idol_labels, idol_names,
+    idol_project_group_memberships, idol_subunit_memberships, idols,
 };
 
 #[derive(Debug, Queryable, Selectable, Identifiable)]

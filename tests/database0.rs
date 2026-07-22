@@ -36,20 +36,18 @@ fn database_zero_is_valid() {
 
     let mut connection = database::establish_selected_connection(0);
 
-    let foreign_keys: ForeignKeysStatus =
-        diesel::sql_query("PRAGMA foreign_keys;")
-            .get_result(&mut connection)
-            .expect("Could not check foreign-key status");
+    let foreign_keys: ForeignKeysStatus = diesel::sql_query("PRAGMA foreign_keys;")
+        .get_result(&mut connection)
+        .expect("Could not check foreign-key status");
 
     assert_eq!(
         foreign_keys.foreign_keys, 1,
         "Foreign-key enforcement is disabled"
     );
 
-    let integrity: IntegrityResult =
-        diesel::sql_query("PRAGMA integrity_check;")
-            .get_result(&mut connection)
-            .expect("Could not run integrity check");
+    let integrity: IntegrityResult = diesel::sql_query("PRAGMA integrity_check;")
+        .get_result(&mut connection)
+        .expect("Could not run integrity check");
 
     assert_eq!(
         integrity.integrity_check, "ok",
@@ -87,18 +85,12 @@ fn database_zero_is_valid() {
     for table in tables {
         let escaped_name = table.name.replace('"', "\"\"");
 
-        let query = format!(
-            "SELECT COUNT(*) AS count FROM \"{}\";",
-            escaped_name
-        );
+        let query = format!("SELECT COUNT(*) AS count FROM \"{}\";", escaped_name);
 
         let result: CountResult = diesel::sql_query(query)
             .get_result(&mut connection)
             .unwrap_or_else(|error| {
-                panic!(
-                    "Table '{}' could not be queried: {}",
-                    table.name, error
-                )
+                panic!("Table '{}' could not be queried: {}", table.name, error)
             });
 
         println!("{}: {} row(s)", table.name, result.count);

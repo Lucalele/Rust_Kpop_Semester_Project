@@ -336,15 +336,10 @@ pub fn initialize_database_zero(connection: &mut SqliteConnection) {
         .expect("Could not initialize database zero");
 }
 
-
 pub fn initialize_all_dbz() {
-    
-        let mut connection = establish_selected_connection(0);
+    let mut connection = establish_selected_connection(0);
 
-        initialize_database_zero(&mut connection);
+    initialize_database_zero(&mut connection);
 
-        println!(
-            "Initialized database{}.sqlite with all tables",
-            0
-        );
-    }
+    println!("Initialized database{}.sqlite with all tables", 0);
+}

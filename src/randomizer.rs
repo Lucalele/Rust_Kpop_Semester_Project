@@ -8,10 +8,7 @@ use crate::album::Album;
 //use crate::groups;
 use crate::schema::albums;
 
-pub fn random_album(
-    connection: &mut SqliteConnection,
-    amount: i64,
-) -> QueryResult<Vec<Album>> {
+pub fn random_album(connection: &mut SqliteConnection, amount: i64) -> QueryResult<Vec<Album>> {
     albums::table
         .select(Album::as_select())
         .order(sql::<Integer>("RANDOM()"))
@@ -19,14 +16,7 @@ pub fn random_album(
         .load(connection)
 }
 
-
-
-
-
-
-pub fn shuffle(
-    connection: &mut SqliteConnection,
-) -> QueryResult<Vec<Album>> {
+pub fn shuffle(connection: &mut SqliteConnection) -> QueryResult<Vec<Album>> {
     albums::table
         .select(Album::as_select())
         .order(sql::<Integer>("RANDOM()"))

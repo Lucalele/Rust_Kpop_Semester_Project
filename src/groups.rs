@@ -2,12 +2,7 @@ use chrono::NaiveDate;
 use diesel::prelude::*;
 
 use crate::schema::{
-    group_companies,
-    group_labels,
-    idol_groups,
-    project_group_parents,
-    project_groups,
-    subunits,
+    group_companies, group_labels, idol_groups, project_group_parents, project_groups, subunits,
 };
 
 #[derive(Debug, Queryable, Selectable, Identifiable)]
