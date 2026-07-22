@@ -95,7 +95,7 @@ pub fn initialize_tape_deck(connection: &mut SqliteConnection) {
             CREATE TABLE IF NOT EXISTS albums_alt (
                 album_id INTEGER PRIMARY KEY AUTOINCREMENT,
                 title TEXT NOT NULL,
-                artist INTEGER NOT NULL
+                artist TEXT NOT NULL
             );
             "#,
         )
