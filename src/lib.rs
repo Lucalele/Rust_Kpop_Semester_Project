@@ -5,3 +5,5 @@ pub mod groups;
 pub mod idol;
 pub mod randomizer;
 pub mod schema;
+pub mod schema_tapedecks;
+pub mod tapedeck;

@@ -207,8 +207,3 @@ CREATE TABLE project_group_parents (
         ON DELETE CASCADE
 );
 
-CREATE TABLE albums_alt (
-                album_id INTEGER PRIMARY KEY AUTOINCREMENT,
-                title TEXT NOT NULL,
-                artist INTEGER NOT NULL
-            );

@@ -1,5 +1,5 @@
 -- This file should undo anything in `up.sql`
-DROP TABLE IF EXISTS albums_alt;
+
 DROP TABLE IF EXISTS project_group_parents;
 DROP TABLE IF EXISTS group_labels;
 DROP TABLE IF EXISTS group_companies;
