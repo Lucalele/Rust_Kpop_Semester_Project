@@ -206,3 +206,9 @@ CREATE TABLE project_group_parents (
         REFERENCES idol_groups(group_id)
         ON DELETE CASCADE
 );
+
+CREATE TABLE albums_alt (
+                album_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                title TEXT NOT NULL,
+                artist INTEGER NOT NULL
+            );
