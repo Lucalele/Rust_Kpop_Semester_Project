@@ -123,16 +123,7 @@ pub fn initialize_database_zero(connection: &mut SqliteConnection) {
     connection
         .batch_execute(
             r#"
-
-            CREATE TABLE IF NOT EXISTS albums (
-                album_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-                title TEXT NOT NULL,
-                artist_id INTEGER NOT NULL,
-                artist_type TEXT NOT NULL,
-                release_date DATE,
-                language TEXT,
-                version TEXT
-            );
+            PRAGMA foreign_keys = ON;
 
             CREATE TABLE IF NOT EXISTS companies (
                 company_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
@@ -197,6 +188,28 @@ pub fn initialize_database_zero(connection: &mut SqliteConnection) {
 
                 gender TEXT NOT NULL
                     CHECK (gender IN ('Male', 'Female', 'CoEd'))
+            );
+
+            CREATE TABLE IF NOT EXISTS albums (
+                album_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                title TEXT NOT NULL,
+                artist_id INTEGER NOT NULL,
+
+                artist_type TEXT NOT NULL
+                    CHECK (
+                        artist_type IN (
+                            'Group',
+                            'Subunit',
+                            'ProjectGroup',
+                            'Soloist'
+                        )
+                    ),
+
+                release_date DATE,
+                language TEXT,
+                version TEXT,
+
+                UNIQUE (artist_id, artist_type, title, version)
             );
 
             CREATE TABLE IF NOT EXISTS idol_group_memberships (
