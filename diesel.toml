@@ -1,18 +1,14 @@
-# For documentation on how to configure this file,
-# see https://diesel.rs/guides/configuring-diesel-cli
+# Diesel CLI is configured only for the normalized main archive.
+# `src/schema_tapedecks.rs` is intentionally maintained manually because
+# database1.sqlite through database7.sqlite all use the same albums_alt table.
 
-
-
-[print_schema.main]
+[print_schema]
 file = "src/schema.rs"
-custom_type_derives = ["diesel::query_builder::QueryId", "Clone"]
-
-[print_schema.tapedecks]
-file = "src/schema_tapedecks.rs"
 custom_type_derives = ["diesel::query_builder::QueryId", "Clone"]
 
 [migrations_directory]
 dir = "migrations"
+
 
 
 

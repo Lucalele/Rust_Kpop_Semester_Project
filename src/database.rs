@@ -3,79 +3,84 @@ use diesel::prelude::*;
 use diesel::sqlite::SqliteConnection;
 use dotenv::dotenv;
 use std::env;
+use std::path::{Path, PathBuf};
 
-pub fn establish_connection() -> SqliteConnection {
-    dotenv().ok();
+/// Resolve database paths relative to the project directory (the folder
+/// containing Cargo.toml). This prevents `cargo test` from creating databases
+/// in whichever directory the command happens to run from.
+fn resolve_database_path(configured_path: &str) -> String {
+    let path = Path::new(configured_path);
 
-    let database_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set in .env");
+    let resolved: PathBuf = if path.is_absolute() {
+        path.to_path_buf()
+    } else {
+        Path::new(env!("CARGO_MANIFEST_DIR")).join(path)
+    };
+
+    resolved.to_string_lossy().into_owned()
+}
+
+fn connect_to(configured_path: &str) -> SqliteConnection {
+    let database_url = resolve_database_path(configured_path);
 
     SqliteConnection::establish(&database_url).unwrap_or_else(|error| {
         panic!("Could not connect to {database_url}: {error}");
     })
 }
 
-pub fn establish_database_1_connection() -> SqliteConnection {
-    let database_url = "database1.sqlite";
+fn configured_tape_deck_path(database_number: u8) -> String {
+    let variable_name = format!("DATABASE_URL{database_number}");
 
-    SqliteConnection::establish(database_url).unwrap_or_else(|error| {
-        panic!("Could not connect to {database_url}: {error}");
-    })
+    env::var(&variable_name).unwrap_or_else(|_| format!("src/database{database_number}.sqlite"))
+}
+
+pub fn establish_connection() -> SqliteConnection {
+    dotenv().ok();
+
+    let configured_path =
+        env::var("DATABASE_URL").unwrap_or_else(|_| "src/database.sqlite".to_string());
+
+    connect_to(&configured_path)
+}
+
+pub fn establish_database_1_connection() -> SqliteConnection {
+    dotenv().ok();
+    connect_to(&configured_tape_deck_path(1))
 }
 
 pub fn establish_database_2_connection() -> SqliteConnection {
-    let database_url = "database2.sqlite";
-
-    SqliteConnection::establish(database_url).unwrap_or_else(|error| {
-        panic!("Could not connect to {database_url}: {error}");
-    })
+    dotenv().ok();
+    connect_to(&configured_tape_deck_path(2))
 }
 
 pub fn establish_database_3_connection() -> SqliteConnection {
-    let database_url = "database3.sqlite";
-
-    SqliteConnection::establish(database_url).unwrap_or_else(|error| {
-        panic!("Could not connect to {database_url}: {error}");
-    })
+    dotenv().ok();
+    connect_to(&configured_tape_deck_path(3))
 }
 
 pub fn establish_database_4_connection() -> SqliteConnection {
-    let database_url = "database4.sqlite";
-
-    SqliteConnection::establish(database_url).unwrap_or_else(|error| {
-        panic!("Could not connect to {database_url}: {error}");
-    })
+    dotenv().ok();
+    connect_to(&configured_tape_deck_path(4))
 }
 
 pub fn establish_database_5_connection() -> SqliteConnection {
-    let database_url = "database5.sqlite";
-
-    SqliteConnection::establish(database_url).unwrap_or_else(|error| {
-        panic!("Could not connect to {database_url}: {error}");
-    })
+    dotenv().ok();
+    connect_to(&configured_tape_deck_path(5))
 }
 
 pub fn establish_database_6_connection() -> SqliteConnection {
-    let database_url = "database6.sqlite";
-
-    SqliteConnection::establish(database_url).unwrap_or_else(|error| {
-        panic!("Could not connect to {database_url}: {error}");
-    })
+    dotenv().ok();
+    connect_to(&configured_tape_deck_path(6))
 }
 
 pub fn establish_database_7_connection() -> SqliteConnection {
-    let database_url = "database7.sqlite";
-
-    SqliteConnection::establish(database_url).unwrap_or_else(|error| {
-        panic!("Could not connect to {database_url}: {error}");
-    })
+    dotenv().ok();
+    connect_to(&configured_tape_deck_path(7))
 }
 
 pub fn establish_selected_connection(database_number: u8) -> SqliteConnection {
     match database_number {
-        // Special main archive, configured through .env
         0 => establish_connection(),
-
-        // User-created rotation databases
         1 => establish_database_1_connection(),
         2 => establish_database_2_connection(),
         3 => establish_database_3_connection(),
@@ -83,7 +88,6 @@ pub fn establish_selected_connection(database_number: u8) -> SqliteConnection {
         5 => establish_database_5_connection(),
         6 => establish_database_6_connection(),
         7 => establish_database_7_connection(),
-
         _ => panic!("Invalid database number: {database_number}. Use 0 through 7."),
     }
 }

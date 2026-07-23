@@ -14,7 +14,6 @@ pub struct AlbumAlt {
 #[derive(Debug, Insertable)]
 #[diesel(table_name = albums_alt)]
 pub struct NewAlbumAlt<'a> {
-    pub album_id: i32,
     pub title: &'a str,
     pub artist: &'a str,
 }
