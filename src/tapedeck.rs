@@ -17,3 +17,24 @@ pub struct NewAlbumAlt<'a> {
     pub title: &'a str,
     pub artist: &'a str,
 }
+
+pub fn insert_album_alt(
+    connection: &mut SqliteConnection,
+    title: &str,
+    artist: &str,
+) -> QueryResult<usize> {
+    let new_album = NewAlbumAlt { title, artist };
+
+    diesel::insert_into(albums_alt::table)
+        .values(&new_album)
+        .execute(connection)
+}
+
+pub fn load_albums_alt(
+    connection: &mut SqliteConnection,
+) -> QueryResult<Vec<AlbumAlt>> {
+    albums_alt::table
+        .select(AlbumAlt::as_select())
+        .order(albums_alt::album_id.asc())
+        .load(connection)
+}
