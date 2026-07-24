@@ -50,9 +50,7 @@ pub fn insert_album(
         .execute(connection)
 }
 
-pub fn load_albums(
-    connection: &mut SqliteConnection,
-) -> QueryResult<Vec<Album>> {
+pub fn load_albums(connection: &mut SqliteConnection) -> QueryResult<Vec<Album>> {
     albums::table
         .select(Album::as_select())
         .order(albums::album_id.asc())

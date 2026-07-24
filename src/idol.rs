@@ -25,8 +25,6 @@ pub struct NewIdol<'a> {
     pub is_soloist: Option<bool>,
 }
 
-
-
 pub fn insert_idol(
     connection: &mut SqliteConnection,
     idol_gender: &str,
@@ -42,15 +40,12 @@ pub fn insert_idol(
         .execute(connection)
 }
 
-pub fn load_idols(
-    connection: &mut SqliteConnection,
-) -> QueryResult<Vec<Idol>> {
+pub fn load_idols(connection: &mut SqliteConnection) -> QueryResult<Vec<Idol>> {
     idols::table
         .select(Idol::as_select())
         .order(idols::idol_id.asc())
         .load(connection)
 }
-
 
 #[derive(Debug, Queryable, Selectable, Identifiable, Associations)]
 #[diesel(table_name = idol_names)]
@@ -88,9 +83,7 @@ pub fn insert_idol_name(
         .execute(connection)
 }
 
-pub fn load_idol_names(
-    connection: &mut SqliteConnection,
-) -> QueryResult<Vec<IdolName>> {
+pub fn load_idol_names(connection: &mut SqliteConnection) -> QueryResult<Vec<IdolName>> {
     idol_names::table
         .select(IdolName::as_select())
         .order(idol_names::idol_name_id.asc())
@@ -105,7 +98,6 @@ pub struct IdolGroupMembership {
     pub group_id: i32,
 }
 
-
 #[derive(Debug, Insertable)]
 #[diesel(table_name = idol_group_memberships)]
 pub struct NewIdolGroupMembership {
@@ -118,16 +110,12 @@ pub fn insert_idol_group_membership(
     idol_id: i32,
     group_id: i32,
 ) -> QueryResult<usize> {
-    let membership = NewIdolGroupMembership {
-        idol_id,
-        group_id,
-    };
+    let membership = NewIdolGroupMembership { idol_id, group_id };
 
     diesel::insert_into(idol_group_memberships::table)
         .values(&membership)
         .execute(connection)
 }
-
 
 #[derive(Debug, Queryable, Selectable, Identifiable)]
 #[diesel(table_name = idol_subunit_memberships)]
@@ -189,7 +177,6 @@ pub fn insert_idol_project_group_membership(
         .execute(connection)
 }
 
-
 #[derive(Debug, Queryable, Selectable, Identifiable)]
 #[diesel(table_name = idol_companies)]
 #[diesel(primary_key(idol_id, company_id))]
@@ -220,7 +207,6 @@ pub fn insert_idol_company(
         .execute(connection)
 }
 
-
 #[derive(Debug, Queryable, Selectable, Identifiable)]
 #[diesel(table_name = idol_labels)]
 #[diesel(primary_key(idol_id, label_id))]
@@ -241,14 +227,9 @@ pub fn insert_idol_label(
     idol_id: i32,
     label_id: i32,
 ) -> QueryResult<usize> {
-    let relationship = NewIdolLabel {
-        idol_id,
-        label_id,
-    };
+    let relationship = NewIdolLabel { idol_id, label_id };
 
     diesel::insert_into(idol_labels::table)
         .values(&relationship)
         .execute(connection)
 }
-
-

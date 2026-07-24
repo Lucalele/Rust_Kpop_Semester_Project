@@ -40,9 +40,7 @@ pub fn insert_group(
         .execute(connection)
 }
 
-pub fn load_groups(
-    connection: &mut SqliteConnection,
-) -> QueryResult<Vec<IdolGroup>> {
+pub fn load_groups(connection: &mut SqliteConnection) -> QueryResult<Vec<IdolGroup>> {
     idol_groups::table
         .select(IdolGroup::as_select())
         .order(idol_groups::group_id.asc())
@@ -94,15 +92,12 @@ pub fn insert_subunit(
         .execute(connection)
 }
 
-pub fn load_subunits(
-    connection: &mut SqliteConnection,
-) -> QueryResult<Vec<Subunit>> {
+pub fn load_subunits(connection: &mut SqliteConnection) -> QueryResult<Vec<Subunit>> {
     subunits::table
         .select(Subunit::as_select())
         .order(subunits::subunit_id.asc())
         .load(connection)
 }
-
 
 #[derive(Debug, Queryable, Selectable, Identifiable)]
 #[diesel(table_name = project_groups)]
@@ -139,15 +134,12 @@ pub fn insert_project_group(
         .execute(connection)
 }
 
-pub fn load_project_groups(
-    connection: &mut SqliteConnection,
-) -> QueryResult<Vec<ProjectGroup>> {
+pub fn load_project_groups(connection: &mut SqliteConnection) -> QueryResult<Vec<ProjectGroup>> {
     project_groups::table
         .select(ProjectGroup::as_select())
         .order(project_groups::project_group_id.asc())
         .load(connection)
 }
-
 
 #[derive(Debug, Queryable, Selectable, Identifiable)]
 #[diesel(table_name = group_companies)]
@@ -199,16 +191,12 @@ pub fn insert_group_label(
     group_id: i32,
     label_id: i32,
 ) -> QueryResult<usize> {
-    let relationship = NewGroupLabel {
-        group_id,
-        label_id,
-    };
+    let relationship = NewGroupLabel { group_id, label_id };
 
     diesel::insert_into(group_labels::table)
         .values(&relationship)
         .execute(connection)
 }
-
 
 #[derive(Debug, Queryable, Selectable, Identifiable)]
 #[diesel(table_name = project_group_parents)]

@@ -16,11 +16,7 @@ pub struct NewCompany<'a> {
     pub company_name: &'a str,
 }
 
-
-pub fn insert_company(
-    connection: &mut SqliteConnection,
-    company_name: &str,
-) -> QueryResult<usize> {
+pub fn insert_company(connection: &mut SqliteConnection, company_name: &str) -> QueryResult<usize> {
     let new_company = NewCompany { company_name };
 
     diesel::insert_into(companies::table)
@@ -28,9 +24,7 @@ pub fn insert_company(
         .execute(connection)
 }
 
-pub fn load_companies(
-    connection: &mut SqliteConnection,
-) -> QueryResult<Vec<Company>> {
+pub fn load_companies(connection: &mut SqliteConnection) -> QueryResult<Vec<Company>> {
     companies::table
         .select(Company::as_select())
         .order(companies::company_id.asc())
@@ -69,9 +63,7 @@ pub fn insert_label(
         .execute(connection)
 }
 
-pub fn load_labels(
-    connection: &mut SqliteConnection,
-) -> QueryResult<Vec<Label>> {
+pub fn load_labels(connection: &mut SqliteConnection) -> QueryResult<Vec<Label>> {
     labels::table
         .select(Label::as_select())
         .order(labels::label_id.asc())
