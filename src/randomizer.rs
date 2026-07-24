@@ -1,12 +1,7 @@
 use chrono::NaiveDate;
 use diesel::prelude::*;
 use diesel::sql_query;
-use diesel::sql_types::{
-    Date,
-    Integer,
-    Nullable,
-    Text,
-};
+use diesel::sql_types::{BigInt, Date, Integer, Nullable, Text};
 use diesel::sqlite::SqliteConnection;
 
 use crate::album::Album;
@@ -103,25 +98,13 @@ pub fn shuffle_matching(
 }
 
 /// Preserves your original no-filter random function.
-pub fn random_album(
-    connection: &mut SqliteConnection,
-    amount: i64,
-) -> QueryResult<Vec<Album>> {
-    random_matching(
-        connection,
-        &RandomizerFilters::default(),
-        amount,
-    )
+pub fn random_album(connection: &mut SqliteConnection, amount: i64) -> QueryResult<Vec<Album>> {
+    random_matching(connection, &RandomizerFilters::default(), amount)
 }
 
 /// Preserves your original no-filter shuffle function.
-pub fn shuffle(
-    connection: &mut SqliteConnection,
-) -> QueryResult<Vec<Album>> {
-    shuffle_matching(
-        connection,
-        &RandomizerFilters::default(),
-    )
+pub fn shuffle(connection: &mut SqliteConnection) -> QueryResult<Vec<Album>> {
+    shuffle_matching(connection, &RandomizerFilters::default())
 }
 
 fn run_randomizer_query(
@@ -565,7 +548,7 @@ fn run_randomizer_query(
     .bind::<Nullable<Text>, _>(filters.label_name.clone())
     .bind::<Nullable<Text>, _>(filters.artist_gender.clone())
     .bind::<Nullable<Text>, _>(filters.member_gender.clone())
-    .bind::<Integer, _>(amount)
+    .bind::<BigInt, _>(amount)
     .load::<AlbumRow>(connection)?;
 
     Ok(rows.into_iter().map(Album::from).collect())

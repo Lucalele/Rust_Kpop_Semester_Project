@@ -30,9 +30,7 @@ pub fn insert_album_alt(
         .execute(connection)
 }
 
-pub fn load_albums_alt(
-    connection: &mut SqliteConnection,
-) -> QueryResult<Vec<AlbumAlt>> {
+pub fn load_albums_alt(connection: &mut SqliteConnection) -> QueryResult<Vec<AlbumAlt>> {
     albums_alt::table
         .select(AlbumAlt::as_select())
         .order(albums_alt::album_id.asc())

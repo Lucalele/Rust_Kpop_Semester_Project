@@ -26,3 +26,35 @@ pub struct NewAlbum<'a> {
     pub language: Option<&'a str>,
     pub version: Option<&'a str>,
 }
+
+pub fn insert_album(
+    connection: &mut SqliteConnection,
+    title: &str,
+    artist_id: i32,
+    artist_type: &str,
+    release_date: Option<NaiveDate>,
+    language: Option<&str>,
+    version: Option<&str>,
+) -> QueryResult<usize> {
+    let new_album = NewAlbum {
+        title,
+        artist_id,
+        artist_type,
+        release_date,
+        language,
+        version,
+    };
+
+    diesel::insert_into(albums::table)
+        .values(&new_album)
+        .execute(connection)
+}
+
+pub fn load_albums(
+    connection: &mut SqliteConnection,
+) -> QueryResult<Vec<Album>> {
+    albums::table
+        .select(Album::as_select())
+        .order(albums::album_id.asc())
+        .load(connection)
+}
