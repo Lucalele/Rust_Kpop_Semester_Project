@@ -105,9 +105,10 @@ fn table_count(
     Ok(result.count)
 }
 
-// -----------------------------------------------------------------------------
+
 // Complete database0 test
-// -----------------------------------------------------------------------------
+//Don't ask why this is one test
+//I gave up on life 3 hours ago
 
 #[test]
 fn database_zero_is_valid_and_all_operations_work() {
