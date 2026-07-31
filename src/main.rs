@@ -1,12 +1,12 @@
-use Rust_Kpop_Semester_Project::database::{self, establish_connection};
+use Rust_Kpop_Semester_Project::database;
+use Rust_Kpop_Semester_Project::importer;
 
 fn main() {
-    establish_connection();
-    database::initialize_all_tape_decks();
+    let mut connection = database::establish_selected_connection(0);
 
-    println!("All seven tape decks are ready");
-
-    database::initialize_all_dbz();
-
-    println!("IT WORKED");
+    importer::import_database_zero(
+        &mut connection,
+        "album.txt",
+    )
+    .unwrap();
 }

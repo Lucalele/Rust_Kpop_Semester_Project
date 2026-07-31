@@ -1,0 +1,3 @@
+COMPANY|JYP Entertainment
+COMPANY|SM Entertainment
+GROUP|TWICE|Female|2015-10-20
