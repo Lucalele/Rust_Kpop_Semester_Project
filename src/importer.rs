@@ -4,6 +4,7 @@ use std::io::{BufRead, BufReader};
 
 use chrono::NaiveDate;
 use diesel::sqlite::SqliteConnection;
+use diesel::result::{DatabaseErrorKind, Error as DieselError};
 
 use crate::album::insert_album;
 use crate::companies::{insert_company, insert_label};
@@ -42,6 +43,19 @@ fn parse_bool(value: &str) -> Option<bool> {
     }
 }
 
+/// Treat UNIQUE constraint violations as success (silent skip),
+/// but still propagate all other errors.
+fn ignore_unique_violation(result: Result<usize, DieselError>) -> Result<(), Box<dyn Error>> {
+    match result {
+        Ok(_) => Ok(()),
+        Err(DieselError::DatabaseError(DatabaseErrorKind::UniqueViolation, _)) => {
+            // Duplicate → silently ignored (A2 behavior)
+            Ok(())
+        }
+        Err(e) => Err(Box::new(e)),
+    }
+}
+
 pub fn import_database_zero(
     connection: &mut SqliteConnection,
     filename: &str,
@@ -66,7 +80,7 @@ pub fn import_database_zero(
                     continue;
                 }
 
-                insert_company(connection, parts[1])?;
+                ignore_unique_violation(insert_company(connection, parts[1]))?;
                 println!("Imported COMPANY {}", parts[1]);
             }
 
@@ -78,12 +92,7 @@ pub fn import_database_zero(
 
                 let company_id: i32 = parts[2].parse()?;
 
-                insert_label(
-                    connection,
-                    parts[1],
-                    company_id,
-                )?;
-
+                ignore_unique_violation(insert_label(connection, parts[1], company_id))?;
                 println!("Imported LABEL {}", parts[1]);
             }
 
@@ -93,12 +102,12 @@ pub fn import_database_zero(
                     continue;
                 }
 
-                insert_group(
+                ignore_unique_violation(insert_group(
                     connection,
                     parts[1],
                     parse_date(parts[2]),
                     parts[3],
-                )?;
+                ))?;
 
                 println!("Imported GROUP {}", parts[1]);
             }
@@ -111,29 +120,29 @@ pub fn import_database_zero(
 
                 let parent_group: i32 = parts[2].parse()?;
 
-                insert_subunit(
+                ignore_unique_violation(insert_subunit(
                     connection,
                     parts[1],
                     parent_group,
                     parse_date(parts[3]),
                     parts[4],
-                )?;
+                ))?;
 
                 println!("Imported SUBUNIT {}", parts[1]);
             }
 
-                      "PROJECTGROUP" => {
+            "PROJECTGROUP" => {
                 if parts.len() != 4 {
                     println!("Invalid PROJECTGROUP: {}", line);
                     continue;
                 }
 
-                insert_project_group(
+                ignore_unique_violation(insert_project_group(
                     connection,
                     parts[1],
                     parse_date(parts[2]),
                     parts[3],
-                )?;
+                ))?;
 
                 println!("Imported PROJECTGROUP {}", parts[1]);
             }
@@ -147,11 +156,11 @@ pub fn import_database_zero(
                 let project_group_id: i32 = parts[1].parse()?;
                 let parent_group_id: i32 = parts[2].parse()?;
 
-                insert_project_group_parent(
+                ignore_unique_violation(insert_project_group_parent(
                     connection,
                     project_group_id,
                     parent_group_id,
-                )?;
+                ))?;
 
                 println!(
                     "Linked PROJECTGROUP {} to parent GROUP {}",
@@ -166,11 +175,11 @@ pub fn import_database_zero(
                     continue;
                 }
 
-                insert_idol(
+                ignore_unique_violation(insert_idol(
                     connection,
                     parts[1],
                     parse_bool(parts[2]),
-                )?;
+                ))?;
 
                 println!("Imported IDOL");
             }
@@ -183,12 +192,7 @@ pub fn import_database_zero(
 
                 let idol_id: i32 = parts[1].parse()?;
 
-                insert_idol_name(
-                    connection,
-                    idol_id,
-                    parts[2],
-                )?;
-
+                ignore_unique_violation(insert_idol_name(connection, idol_id, parts[2]))?;
                 println!("Added name {} to idol {}", parts[2], idol_id);
             }
 
@@ -201,17 +205,8 @@ pub fn import_database_zero(
                 let idol_id: i32 = parts[1].parse()?;
                 let group_id: i32 = parts[2].parse()?;
 
-                insert_idol_group_membership(
-                    connection,
-                    idol_id,
-                    group_id,
-                )?;
-
-                println!(
-                    "Linked idol {} to group {}",
-                    idol_id,
-                    group_id
-                );
+                ignore_unique_violation(insert_idol_group_membership(connection, idol_id, group_id))?;
+                println!("Linked idol {} to group {}", idol_id, group_id);
             }
 
             "IDOLSUBUNIT" => {
@@ -223,17 +218,8 @@ pub fn import_database_zero(
                 let idol_id: i32 = parts[1].parse()?;
                 let subunit_id: i32 = parts[2].parse()?;
 
-                insert_idol_subunit_membership(
-                    connection,
-                    idol_id,
-                    subunit_id,
-                )?;
-
-                println!(
-                    "Linked idol {} to subunit {}",
-                    idol_id,
-                    subunit_id
-                );
+                ignore_unique_violation(insert_idol_subunit_membership(connection, idol_id, subunit_id))?;
+                println!("Linked idol {} to subunit {}", idol_id, subunit_id);
             }
 
             "IDOLPROJECTGROUP" => {
@@ -245,20 +231,16 @@ pub fn import_database_zero(
                 let idol_id: i32 = parts[1].parse()?;
                 let project_group_id: i32 = parts[2].parse()?;
 
-                insert_idol_project_group_membership(
+                ignore_unique_violation(insert_idol_project_group_membership(
                     connection,
                     idol_id,
                     project_group_id,
-                )?;
+                ))?;
 
-                println!(
-                    "Linked idol {} to project group {}",
-                    idol_id,
-                    project_group_id
-                );
+                println!("Linked idol {} to project group {}", idol_id, project_group_id);
             }
 
-                        "IDOLCOMPANY" => {
+            "IDOLCOMPANY" => {
                 if parts.len() != 3 {
                     println!("Invalid IDOLCOMPANY: {}", line);
                     continue;
@@ -267,17 +249,8 @@ pub fn import_database_zero(
                 let idol_id: i32 = parts[1].parse()?;
                 let company_id: i32 = parts[2].parse()?;
 
-                insert_idol_company(
-                    connection,
-                    idol_id,
-                    company_id,
-                )?;
-
-                println!(
-                    "Linked idol {} to company {}",
-                    idol_id,
-                    company_id
-                );
+                ignore_unique_violation(insert_idol_company(connection, idol_id, company_id))?;
+                println!("Linked idol {} to company {}", idol_id, company_id);
             }
 
             "IDOLLABEL" => {
@@ -289,17 +262,8 @@ pub fn import_database_zero(
                 let idol_id: i32 = parts[1].parse()?;
                 let label_id: i32 = parts[2].parse()?;
 
-                insert_idol_label(
-                    connection,
-                    idol_id,
-                    label_id,
-                )?;
-
-                println!(
-                    "Linked idol {} to label {}",
-                    idol_id,
-                    label_id
-                );
+                ignore_unique_violation(insert_idol_label(connection, idol_id, label_id))?;
+                println!("Linked idol {} to label {}", idol_id, label_id);
             }
 
             "GROUPCOMPANY" => {
@@ -311,17 +275,8 @@ pub fn import_database_zero(
                 let group_id: i32 = parts[1].parse()?;
                 let company_id: i32 = parts[2].parse()?;
 
-                insert_group_company(
-                    connection,
-                    group_id,
-                    company_id,
-                )?;
-
-                println!(
-                    "Linked group {} to company {}",
-                    group_id,
-                    company_id
-                );
+                ignore_unique_violation(insert_group_company(connection, group_id, company_id))?;
+                println!("Linked group {} to company {}", group_id, company_id);
             }
 
             "GROUPLABEL" => {
@@ -333,17 +288,8 @@ pub fn import_database_zero(
                 let group_id: i32 = parts[1].parse()?;
                 let label_id: i32 = parts[2].parse()?;
 
-                insert_group_label(
-                    connection,
-                    group_id,
-                    label_id,
-                )?;
-
-                println!(
-                    "Linked group {} to label {}",
-                    group_id,
-                    label_id
-                );
+                ignore_unique_violation(insert_group_label(connection, group_id, label_id))?;
+                println!("Linked group {} to label {}", group_id, label_id);
             }
 
             "ALBUM" => {
@@ -366,7 +312,7 @@ pub fn import_database_zero(
                     Some(parts[6])
                 };
 
-                insert_album(
+                ignore_unique_violation(insert_album(
                     connection,
                     parts[1],
                     artist_id,
@@ -374,7 +320,7 @@ pub fn import_database_zero(
                     parse_date(parts[4]),
                     language,
                     version,
-                )?;
+                ))?;
 
                 println!("Imported ALBUM {}", parts[1]);
             }
@@ -385,12 +331,7 @@ pub fn import_database_zero(
                     continue;
                 }
 
-                insert_album_alt(
-                    connection,
-                    parts[1],
-                    parts[2],
-                )?;
-
+                ignore_unique_violation(insert_album_alt(connection, parts[1], parts[2]))?;
                 println!("Imported ALBUMALT {}", parts[1]);
             }
 

@@ -33,4 +33,4 @@ GROUPLABEL|1|1
 
 ALBUM|IM NAYEON|1|Soloist|2022-06-24|Korean|Standard
 
-ALBUMALT|Formula of Love|TWICE
+
