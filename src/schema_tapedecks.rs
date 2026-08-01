@@ -3,6 +3,8 @@
 // against the main archive should not overwrite this file.
 //Supposedely
 //Maybe don't try it
+//ABOSUTELY DO NOT TRY IT
+//KENNEDY IT BREAKS EVERYTHING
 
 diesel::table! {
     albums_alt (album_id) {

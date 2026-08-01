@@ -1,56 +1,70 @@
 use diesel::prelude::*;
-use crate::database;
-use crate::importer;
+use diesel::sqlite::SqliteConnection;
+use std::fs;
+use std::fs::File;
 
-use crate::loaders::{
-    load_companies,
-    load_labels,
-    load_groups,
-    load_subunits,
-    load_project_groups,
-    load_idols,
-    load_idol_names,
-    load_albums,
-};
+use Rust_Kpop_Semester_Project::importer::import_database_zero;
 
 fn main() {
-    // Connect to DB0 (main database)
-    let mut connection = database::establish_selected_connection(0);
+    println!("Starting K-Pop Archive");
 
-    // Initialize tape deck databases DB1–DB7
-    for i in 1..=7 {
-        let mut tape_conn = database::establish_selected_connection(i);
-        database::initialize_tape_deck(&mut tape_conn);
+    init_tapedecks();
+
+    // --- MAIN DATABASE CHECK ---
+    let main_db = "src/database.sqlite";
+    if !fs::metadata(main_db).is_ok() {
+        eprintln!("Main database not found at {main_db}");
+        eprintln!("Run: diesel migration run");
+        return;
     }
 
-    // Import data into DB0
-    importer::import_database_zero(
-        &mut connection,
-        "album.txt",
-    ).expect("Failed to import DB0");
+    let mut conn = match SqliteConnection::establish(main_db) {
+        Ok(c) => c,
+        Err(e) => {
+            eprintln!("Failed to connect to main DB: {e}");
+            eprintln!("Run: diesel migration run");
+            return;
+        }
+    };
 
-    // Print everything from DB0
-    println!("Companies:");
-    println!("{:#?}", load_companies(&mut connection).unwrap());
+    println!("Main database OK");
 
-    println!("Labels:");
-    println!("{:#?}", load_labels(&mut connection).unwrap());
+    println!("Running importer with src/album.txt");
 
-    println!("Groups:");
-    println!("{:#?}", load_groups(&mut connection).unwrap());
+    if let Err(e) = import_database_zero(&mut conn, "src/album.txt") {
+        eprintln!("Importer failed: {e}");
+        return;
+    }
 
-    println!("Subunits:");
-    println!("{:#?}", load_subunits(&mut connection).unwrap());
+    println!("Import complete");
+}
 
-    println!("Project Groups:");
-    println!("{:#?}", load_project_groups(&mut connection).unwrap());
+fn init_tapedecks() {
+    use diesel::prelude::*;
+    use diesel::sqlite::SqliteConnection;
 
-    println!("Idols:");
-    println!("{:#?}", load_idols(&mut connection).unwrap());
+    let schema = "
+        CREATE TABLE IF NOT EXISTS albums_alt (
+            album_id INTEGER PRIMARY KEY AUTOINCREMENT,
+            title TEXT NOT NULL,
+            artist TEXT NOT NULL
+        );
+    ";
 
-    println!("Idol Names:");
-    println!("{:#?}", load_idol_names(&mut connection).unwrap());
+    for i in 1..=7 {
+        let path = format!("src/database{i}.sqlite");
 
-    println!("Albums:");
-    println!("{:#?}", load_albums(&mut connection).unwrap());
+        // Create file if missing
+        if !fs::metadata(&path).is_ok() {
+            File::create(&path).expect("Failed to create Tape Deck database file");
+        }
+
+        // Apply schema
+        let mut conn = SqliteConnection::establish(&path)
+            .expect("Failed to connect to Tape Deck database");
+
+        diesel::sql_query(schema)
+            .execute(&mut conn)
+            .expect("Failed to apply Tape Deck schema");
+    }
 }
