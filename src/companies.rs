@@ -21,8 +21,11 @@ pub fn insert_company(connection: &mut SqliteConnection, company_name: &str) -> 
 
     diesel::insert_into(companies::table)
         .values(&new_company)
+        .on_conflict(companies::company_name)
+        .do_nothing()
         .execute(connection)
 }
+
 
 pub fn load_companies(connection: &mut SqliteConnection) -> QueryResult<Vec<Company>> {
     companies::table
@@ -60,8 +63,11 @@ pub fn insert_label(
 
     diesel::insert_into(labels::table)
         .values(&new_label)
+        .on_conflict((labels::label_name, labels::company_id))
+        .do_nothing()
         .execute(connection)
 }
+
 
 pub fn load_labels(connection: &mut SqliteConnection) -> QueryResult<Vec<Label>> {
     labels::table

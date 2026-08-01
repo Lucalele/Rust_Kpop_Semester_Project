@@ -1,23 +1,35 @@
-use Rust_Kpop_Semester_Project::album::load_albums;
-use Rust_Kpop_Semester_Project::companies::{load_companies, load_labels};
-use Rust_Kpop_Semester_Project::database;
-use Rust_Kpop_Semester_Project::groups::{
+use diesel::prelude::*;
+use crate::database;
+use crate::importer;
+
+use crate::loaders::{
+    load_companies,
+    load_labels,
     load_groups,
-    load_project_groups,
     load_subunits,
+    load_project_groups,
+    load_idols,
+    load_idol_names,
+    load_albums,
 };
-use Rust_Kpop_Semester_Project::idol::{load_idol_names, load_idols};
-use Rust_Kpop_Semester_Project::importer;
 
 fn main() {
+    // Connect to DB0 (main database)
     let mut connection = database::establish_selected_connection(0);
 
+    // Initialize tape deck databases DB1–DB7
+    for i in 1..=7 {
+        let mut tape_conn = database::establish_selected_connection(i);
+        database::initialize_tape_deck(&mut tape_conn);
+    }
+
+    // Import data into DB0
     importer::import_database_zero(
         &mut connection,
         "album.txt",
-    )
-    .unwrap();
+    ).expect("Failed to import DB0");
 
+    // Print everything from DB0
     println!("Companies:");
     println!("{:#?}", load_companies(&mut connection).unwrap());
 

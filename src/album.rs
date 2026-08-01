@@ -47,6 +47,8 @@ pub fn insert_album(
 
     diesel::insert_into(albums::table)
         .values(&new_album)
+        .on_conflict((albums::title, albums::artist_id, albums::version))
+        .do_nothing()
         .execute(connection)
 }
 
