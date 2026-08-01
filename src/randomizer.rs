@@ -1,7 +1,7 @@
 use chrono::NaiveDate;
 use diesel::prelude::*;
 use diesel::sql_query;
-use diesel::sql_types::{BigInt, Date, Integer, Nullable, Text};
+use diesel::sql_types::{BigInt, Nullable, Text};
 use diesel::sqlite::SqliteConnection;
 
 use crate::album::Album;
@@ -35,19 +35,19 @@ pub struct RandomizerFilters {
 /// A private structure used to read Album rows from raw SQL.
 #[derive(Debug, QueryableByName)]
 struct AlbumRow {
-    #[diesel(sql_type = Integer)]
+    #[diesel(sql_type = diesel::sql_types::Integer)]
     album_id: i32,
 
     #[diesel(sql_type = Text)]
     title: String,
 
-    #[diesel(sql_type = Integer)]
+    #[diesel(sql_type = diesel::sql_types::Integer)]
     artist_id: i32,
 
     #[diesel(sql_type = Text)]
     artist_type: String,
 
-    #[diesel(sql_type = Nullable<Date>)]
+    #[diesel(sql_type = Nullable<diesel::sql_types::Date>)]
     release_date: Option<NaiveDate>,
 
     #[diesel(sql_type = Nullable<Text>)]
@@ -72,13 +72,6 @@ impl From<AlbumRow> for Album {
 }
 
 /// Returns randomized albums matching all supplied filters.
-///
-/// `amount` is the maximum number of albums returned.
-///
-/// Examples:
-/// - `amount = 1`: one random matching album
-/// - `amount = 10`: up to ten random matching albums
-/// - `amount = 5`: up to five random matching albums
 pub fn random_matching(
     connection: &mut SqliteConnection,
     filters: &RandomizerFilters,
@@ -88,8 +81,6 @@ pub fn random_matching(
 }
 
 /// Returns the entire matching collection in random order.
-///
-/// SQLite treats `LIMIT -1` as no limit.
 pub fn shuffle_matching(
     connection: &mut SqliteConnection,
     filters: &RandomizerFilters,
@@ -112,6 +103,10 @@ fn run_randomizer_query(
     filters: &RandomizerFilters,
     amount: i64,
 ) -> QueryResult<Vec<Album>> {
+    // Format dates to ISO strings for reliable SQLite string comparison
+    let start_date_str = filters.start_date.map(|d| d.format("%Y-%m-%d").to_string());
+    let end_date_str = filters.end_date.map(|d| d.format("%Y-%m-%d").to_string());
+
     let rows = sql_query(
         r#"
         WITH filter_values AS (
@@ -141,9 +136,7 @@ fn run_randomizer_query(
         FROM albums AS a
         CROSS JOIN filter_values AS f
         WHERE
-            /*
-             * Direct album filters
-             */
+            /* Direct album filters */
             (
                 f.title_filter IS NULL
                 OR a.title LIKE '%' || f.title_filter || '%'
@@ -173,12 +166,7 @@ fn run_randomizer_query(
                 OR a.version LIKE '%' || f.version_filter || '%'
             )
 
-            /*
-             * Artist-name filter.
-             *
-             * artist_id points to a different table depending on
-             * artist_type.
-             */
+            /* Artist-name filter */
             AND (
                 f.artist_name_filter IS NULL
 
@@ -188,8 +176,7 @@ fn run_randomizer_query(
                         SELECT 1
                         FROM idol_groups AS g
                         WHERE g.group_id = a.artist_id
-                          AND g.group_name
-                              LIKE '%' || f.artist_name_filter || '%'
+                          AND g.group_name LIKE '%' || f.artist_name_filter || '%'
                     )
                 )
 
@@ -199,8 +186,7 @@ fn run_randomizer_query(
                         SELECT 1
                         FROM subunits AS s
                         WHERE s.subunit_id = a.artist_id
-                          AND s.subunit_name
-                              LIKE '%' || f.artist_name_filter || '%'
+                          AND s.subunit_name LIKE '%' || f.artist_name_filter || '%'
                     )
                 )
 
@@ -210,8 +196,7 @@ fn run_randomizer_query(
                         SELECT 1
                         FROM project_groups AS pg
                         WHERE pg.project_group_id = a.artist_id
-                          AND pg.project_group_name
-                              LIKE '%' || f.artist_name_filter || '%'
+                          AND pg.project_group_name LIKE '%' || f.artist_name_filter || '%'
                     )
                 )
 
@@ -221,21 +206,12 @@ fn run_randomizer_query(
                         SELECT 1
                         FROM idol_names AS names
                         WHERE names.idol_id = a.artist_id
-                          AND names.name
-                              LIKE '%' || f.artist_name_filter || '%'
+                          AND names.name LIKE '%' || f.artist_name_filter || '%'
                     )
                 )
             )
 
-            /*
-             * Member-name filter.
-             *
-             * A matching idol may appear as:
-             * - the soloist
-             * - a group member
-             * - a subunit member
-             * - a project-group member
-             */
+            /* Member-name filter */
             AND (
                 f.member_name_filter IS NULL
 
@@ -245,8 +221,7 @@ fn run_randomizer_query(
                     INNER JOIN idol_names AS names
                         ON names.idol_id = i.idol_id
                     WHERE
-                        names.name
-                            LIKE '%' || f.member_name_filter || '%'
+                        names.name LIKE '%' || f.member_name_filter || '%'
 
                         AND (
                             (
@@ -287,14 +262,7 @@ fn run_randomizer_query(
                 )
             )
 
-            /*
-             * Company filter.
-             *
-             * Groups use group_companies.
-             * Subunits inherit companies from their parent group.
-             * Project groups inherit companies through parent groups.
-             * Soloists use idol_companies.
-             */
+            /* Company filter */
             AND (
                 f.company_name_filter IS NULL
 
@@ -303,11 +271,9 @@ fn run_randomizer_query(
                     AND EXISTS (
                         SELECT 1
                         FROM group_companies AS gc
-                        INNER JOIN companies AS c
-                            ON c.company_id = gc.company_id
+                        INNER JOIN companies AS c ON c.company_id = gc.company_id
                         WHERE gc.group_id = a.artist_id
-                          AND c.company_name
-                              LIKE '%' || f.company_name_filter || '%'
+                          AND c.company_name LIKE '%' || f.company_name_filter || '%'
                     )
                 )
 
@@ -316,13 +282,10 @@ fn run_randomizer_query(
                     AND EXISTS (
                         SELECT 1
                         FROM subunits AS s
-                        INNER JOIN group_companies AS gc
-                            ON gc.group_id = s.parent_group_id
-                        INNER JOIN companies AS c
-                            ON c.company_id = gc.company_id
+                        INNER JOIN group_companies AS gc ON gc.group_id = s.parent_group_id
+                        INNER JOIN companies AS c ON c.company_id = gc.company_id
                         WHERE s.subunit_id = a.artist_id
-                          AND c.company_name
-                              LIKE '%' || f.company_name_filter || '%'
+                          AND c.company_name LIKE '%' || f.company_name_filter || '%'
                     )
                 )
 
@@ -331,13 +294,10 @@ fn run_randomizer_query(
                     AND EXISTS (
                         SELECT 1
                         FROM project_group_parents AS pgp
-                        INNER JOIN group_companies AS gc
-                            ON gc.group_id = pgp.parent_group_id
-                        INNER JOIN companies AS c
-                            ON c.company_id = gc.company_id
+                        INNER JOIN group_companies AS gc ON gc.group_id = pgp.parent_group_id
+                        INNER JOIN companies AS c ON c.company_id = gc.company_id
                         WHERE pgp.project_group_id = a.artist_id
-                          AND c.company_name
-                              LIKE '%' || f.company_name_filter || '%'
+                          AND c.company_name LIKE '%' || f.company_name_filter || '%'
                     )
                 )
 
@@ -346,23 +306,14 @@ fn run_randomizer_query(
                     AND EXISTS (
                         SELECT 1
                         FROM idol_companies AS ic
-                        INNER JOIN companies AS c
-                            ON c.company_id = ic.company_id
+                        INNER JOIN companies AS c ON c.company_id = ic.company_id
                         WHERE ic.idol_id = a.artist_id
-                          AND c.company_name
-                              LIKE '%' || f.company_name_filter || '%'
+                          AND c.company_name LIKE '%' || f.company_name_filter || '%'
                     )
                 )
             )
 
-            /*
-             * Label filter.
-             *
-             * Groups use group_labels.
-             * Subunits inherit labels from their parent group.
-             * Project groups inherit labels through parent groups.
-             * Soloists use idol_labels.
-             */
+            /* Label filter */
             AND (
                 f.label_name_filter IS NULL
 
@@ -371,11 +322,9 @@ fn run_randomizer_query(
                     AND EXISTS (
                         SELECT 1
                         FROM group_labels AS gl
-                        INNER JOIN labels AS l
-                            ON l.label_id = gl.label_id
+                        INNER JOIN labels AS l ON l.label_id = gl.label_id
                         WHERE gl.group_id = a.artist_id
-                          AND l.label_name
-                              LIKE '%' || f.label_name_filter || '%'
+                          AND l.label_name LIKE '%' || f.label_name_filter || '%'
                     )
                 )
 
@@ -384,13 +333,10 @@ fn run_randomizer_query(
                     AND EXISTS (
                         SELECT 1
                         FROM subunits AS s
-                        INNER JOIN group_labels AS gl
-                            ON gl.group_id = s.parent_group_id
-                        INNER JOIN labels AS l
-                            ON l.label_id = gl.label_id
+                        INNER JOIN group_labels AS gl ON gl.group_id = s.parent_group_id
+                        INNER JOIN labels AS l ON l.label_id = gl.label_id
                         WHERE s.subunit_id = a.artist_id
-                          AND l.label_name
-                              LIKE '%' || f.label_name_filter || '%'
+                          AND l.label_name LIKE '%' || f.label_name_filter || '%'
                     )
                 )
 
@@ -399,13 +345,10 @@ fn run_randomizer_query(
                     AND EXISTS (
                         SELECT 1
                         FROM project_group_parents AS pgp
-                        INNER JOIN group_labels AS gl
-                            ON gl.group_id = pgp.parent_group_id
-                        INNER JOIN labels AS l
-                            ON l.label_id = gl.label_id
+                        INNER JOIN group_labels AS gl ON gl.group_id = pgp.parent_group_id
+                        INNER JOIN labels AS l ON l.label_id = gl.label_id
                         WHERE pgp.project_group_id = a.artist_id
-                          AND l.label_name
-                              LIKE '%' || f.label_name_filter || '%'
+                          AND l.label_name LIKE '%' || f.label_name_filter || '%'
                     )
                 )
 
@@ -414,25 +357,14 @@ fn run_randomizer_query(
                     AND EXISTS (
                         SELECT 1
                         FROM idol_labels AS il
-                        INNER JOIN labels AS l
-                            ON l.label_id = il.label_id
+                        INNER JOIN labels AS l ON l.label_id = il.label_id
                         WHERE il.idol_id = a.artist_id
-                          AND l.label_name
-                              LIKE '%' || f.label_name_filter || '%'
+                          AND l.label_name LIKE '%' || f.label_name_filter || '%'
                     )
                 )
             )
 
-            /*
-             * Artist-gender filter.
-             *
-             * Expected group values:
-             * - Male
-             * - Female
-             * - CoEd
-             *
-             * Soloist albums use idols.idol_gender.
-             */
+            /* Artist-gender filter */
             AND (
                 f.artist_gender_filter IS NULL
 
@@ -477,12 +409,7 @@ fn run_randomizer_query(
                 )
             )
 
-            /*
-             * Member-gender filter.
-             *
-             * Returns albums whose performing artist contains at least
-             * one idol with the selected gender.
-             */
+            /* Member-gender filter */
             AND (
                 f.member_gender_filter IS NULL
 
@@ -536,10 +463,10 @@ fn run_randomizer_query(
         "#,
     )
     .bind::<Nullable<Text>, _>(filters.title.clone())
-    .bind::<Nullable<Integer>, _>(filters.artist_id)
+    .bind::<Nullable<diesel::sql_types::Integer>, _>(filters.artist_id)
     .bind::<Nullable<Text>, _>(filters.artist_type.clone())
-    .bind::<Nullable<Date>, _>(filters.start_date)
-    .bind::<Nullable<Date>, _>(filters.end_date)
+    .bind::<Nullable<Text>, _>(start_date_str)
+    .bind::<Nullable<Text>, _>(end_date_str)
     .bind::<Nullable<Text>, _>(filters.language.clone())
     .bind::<Nullable<Text>, _>(filters.version.clone())
     .bind::<Nullable<Text>, _>(filters.artist_name.clone())

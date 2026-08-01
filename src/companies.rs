@@ -26,7 +26,6 @@ pub fn insert_company(connection: &mut SqliteConnection, company_name: &str) -> 
         .execute(connection)
 }
 
-
 pub fn load_companies(connection: &mut SqliteConnection) -> QueryResult<Vec<Company>> {
     companies::table
         .select(Company::as_select())
@@ -67,7 +66,6 @@ pub fn insert_label(
         .do_nothing()
         .execute(connection)
 }
-
 
 pub fn load_labels(connection: &mut SqliteConnection) -> QueryResult<Vec<Label>> {
     labels::table

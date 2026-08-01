@@ -47,7 +47,13 @@ pub fn insert_album(
 
     diesel::insert_into(albums::table)
         .values(&new_album)
-        .on_conflict((albums::title, albums::artist_id, albums::version))
+        // Match the exact UNIQUE (artist_id, artist_type, title, version) from up.sql:
+        .on_conflict((
+            albums::artist_id,
+            albums::artist_type,
+            albums::title,
+            albums::version,
+        ))
         .do_nothing()
         .execute(connection)
 }

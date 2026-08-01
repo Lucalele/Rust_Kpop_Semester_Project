@@ -60,8 +60,8 @@ fn init_tapedecks() {
         }
 
         // Apply schema
-        let mut conn = SqliteConnection::establish(&path)
-            .expect("Failed to connect to Tape Deck database");
+        let mut conn =
+            SqliteConnection::establish(&path).expect("Failed to connect to Tape Deck database");
 
         diesel::sql_query(schema)
             .execute(&mut conn)

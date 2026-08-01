@@ -3,7 +3,7 @@ PRAGMA foreign_keys = ON;
 
 CREATE TABLE companies (
     company_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-    company_name TEXT NOT NULL
+    company_name TEXT NOT NULL UNIQUE
 );
 
 CREATE TABLE labels (
@@ -13,7 +13,9 @@ CREATE TABLE labels (
 
     FOREIGN KEY (company_id)
         REFERENCES companies(company_id)
-        ON DELETE CASCADE
+        ON DELETE CASCADE,
+
+    UNIQUE (label_name, company_id)
 );
 
 CREATE TABLE idols (
@@ -36,7 +38,7 @@ CREATE TABLE idol_names (
 
 CREATE TABLE idol_groups (
     group_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-    group_name TEXT NOT NULL,
+    group_name TEXT NOT NULL UNIQUE,
     debut_date DATE,
 
     gender TEXT NOT NULL
@@ -54,12 +56,14 @@ CREATE TABLE subunits (
 
     FOREIGN KEY (parent_group_id)
         REFERENCES idol_groups(group_id)
-        ON DELETE CASCADE
+        ON DELETE CASCADE,
+
+    UNIQUE (subunit_name, parent_group_id)
 );
 
 CREATE TABLE project_groups (
     project_group_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-    project_group_name TEXT NOT NULL,
+    project_group_name TEXT NOT NULL UNIQUE,
     debut_date DATE,
 
     gender TEXT NOT NULL
@@ -87,6 +91,7 @@ CREATE TABLE albums (
 
     UNIQUE (artist_id, artist_type, title, version)
 );
+
 CREATE TABLE idol_group_memberships (
     idol_id INTEGER NOT NULL,
     group_id INTEGER NOT NULL,
@@ -206,4 +211,3 @@ CREATE TABLE project_group_parents (
         REFERENCES idol_groups(group_id)
         ON DELETE CASCADE
 );
-

@@ -3,27 +3,18 @@ use std::fs::File;
 use std::io::{BufRead, BufReader};
 
 use chrono::NaiveDate;
-use diesel::sqlite::SqliteConnection;
 use diesel::result::{DatabaseErrorKind, Error as DieselError};
+use diesel::sqlite::SqliteConnection;
 
 use crate::album::insert_album;
 use crate::companies::{insert_company, insert_label};
 use crate::groups::{
-    insert_group,
-    insert_group_company,
-    insert_group_label,
-    insert_project_group,
-    insert_project_group_parent,
-    insert_subunit,
+    insert_group, insert_group_company, insert_group_label, insert_project_group,
+    insert_project_group_parent, insert_subunit,
 };
 use crate::idol::{
-    insert_idol,
-    insert_idol_company,
-    insert_idol_group_membership,
-    insert_idol_label,
-    insert_idol_name,
-    insert_idol_project_group_membership,
-    insert_idol_subunit_membership,
+    insert_idol, insert_idol_company, insert_idol_group_membership, insert_idol_label,
+    insert_idol_name, insert_idol_project_group_membership, insert_idol_subunit_membership,
 };
 use crate::tapedeck::insert_album_alt;
 
@@ -73,7 +64,6 @@ pub fn import_database_zero(
         let parts: Vec<&str> = line.split('|').collect();
 
         match parts[0] {
-
             "COMPANY" => {
                 if parts.len() != 2 {
                     println!("Invalid COMPANY: {}", line);
@@ -164,8 +154,7 @@ pub fn import_database_zero(
 
                 println!(
                     "Linked PROJECTGROUP {} to parent GROUP {}",
-                    project_group_id,
-                    parent_group_id
+                    project_group_id, parent_group_id
                 );
             }
 
@@ -175,11 +164,7 @@ pub fn import_database_zero(
                     continue;
                 }
 
-                ignore_unique_violation(insert_idol(
-                    connection,
-                    parts[1],
-                    parse_bool(parts[2]),
-                ))?;
+                ignore_unique_violation(insert_idol(connection, parts[1], parse_bool(parts[2])))?;
 
                 println!("Imported IDOL");
             }
@@ -205,7 +190,9 @@ pub fn import_database_zero(
                 let idol_id: i32 = parts[1].parse()?;
                 let group_id: i32 = parts[2].parse()?;
 
-                ignore_unique_violation(insert_idol_group_membership(connection, idol_id, group_id))?;
+                ignore_unique_violation(insert_idol_group_membership(
+                    connection, idol_id, group_id,
+                ))?;
                 println!("Linked idol {} to group {}", idol_id, group_id);
             }
 
@@ -218,7 +205,9 @@ pub fn import_database_zero(
                 let idol_id: i32 = parts[1].parse()?;
                 let subunit_id: i32 = parts[2].parse()?;
 
-                ignore_unique_violation(insert_idol_subunit_membership(connection, idol_id, subunit_id))?;
+                ignore_unique_violation(insert_idol_subunit_membership(
+                    connection, idol_id, subunit_id,
+                ))?;
                 println!("Linked idol {} to subunit {}", idol_id, subunit_id);
             }
 
@@ -237,7 +226,10 @@ pub fn import_database_zero(
                     project_group_id,
                 ))?;
 
-                println!("Linked idol {} to project group {}", idol_id, project_group_id);
+                println!(
+                    "Linked idol {} to project group {}",
+                    idol_id, project_group_id
+                );
             }
 
             "IDOLCOMPANY" => {
