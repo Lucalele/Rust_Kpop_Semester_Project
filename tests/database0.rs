@@ -15,9 +15,7 @@ use Rust_Kpop_Semester_Project::idol::{
     insert_idol, insert_idol_company, insert_idol_group_membership, insert_idol_label,
     insert_idol_name, insert_idol_project_group_membership, insert_idol_subunit_membership,
 };
-use Rust_Kpop_Semester_Project::randomizer::{
-    random_matching, RandomizerFilters,
-};
+use Rust_Kpop_Semester_Project::randomizer::{RandomizerFilters, random_matching};
 
 // -----------------------------------------------------------------------------
 // Raw SQL result types

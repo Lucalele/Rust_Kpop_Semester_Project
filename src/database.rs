@@ -92,8 +92,6 @@ pub fn establish_selected_connection(database_number: u8) -> SqliteConnection {
     }
 }
 
-
-
 pub fn initialize_database_zero(connection: &mut SqliteConnection) {
     connection
         .batch_execute(

@@ -6,9 +6,7 @@ use std::path::Path;
 
 // Internal imports
 use Rust_Kpop_Semester_Project::importer::import_database_zero;
-use Rust_Kpop_Semester_Project::randomizer::{
-    random_matching, RandomizerFilters,
-};
+use Rust_Kpop_Semester_Project::randomizer::{RandomizerFilters, random_matching};
 
 fn main() {
     println!("Starting K-Pop Archive...");
@@ -169,7 +167,10 @@ fn display_results(albums: &[Rust_Kpop_Semester_Project::album::Album]) {
             idx + 1,
             album.title,
             album.artist_type,
-            album.release_date.map(|d| d.to_string()).unwrap_or_else(|| "N/A".into())
+            album
+                .release_date
+                .map(|d| d.to_string())
+                .unwrap_or_else(|| "N/A".into())
         );
     }
     println!("{:-<65}", "");
