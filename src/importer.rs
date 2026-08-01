@@ -16,7 +16,6 @@ use crate::idol::{
     insert_idol, insert_idol_company, insert_idol_group_membership, insert_idol_label,
     insert_idol_name, insert_idol_project_group_membership, insert_idol_subunit_membership,
 };
-use crate::tapedeck::insert_album_alt;
 
 fn parse_date(value: &str) -> Option<NaiveDate> {
     if value.trim().is_empty() {
@@ -315,16 +314,6 @@ pub fn import_database_zero(
                 ))?;
 
                 println!("Imported ALBUM {}", parts[1]);
-            }
-
-            "ALBUMALT" => {
-                if parts.len() != 3 {
-                    println!("Invalid ALBUMALT: {}", line);
-                    continue;
-                }
-
-                ignore_unique_violation(insert_album_alt(connection, parts[1], parts[2]))?;
-                println!("Imported ALBUMALT {}", parts[1]);
             }
 
             _ => {

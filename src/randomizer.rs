@@ -71,41 +71,31 @@ impl From<AlbumRow> for Album {
     }
 }
 
-/// Returns randomized albums matching all supplied filters.
+/// Returns randomized albums matching all supplied filters up to `amount`.
 pub fn random_matching(
     connection: &mut SqliteConnection,
     filters: &RandomizerFilters,
     amount: i64,
 ) -> QueryResult<Vec<Album>> {
-    run_randomizer_query(connection, filters, amount.max(0))
+    run_randomizer_query(connection, filters, Some(amount.max(0)))
 }
 
-/// Returns the entire matching collection in random order.
-pub fn shuffle_matching(
-    connection: &mut SqliteConnection,
-    filters: &RandomizerFilters,
-) -> QueryResult<Vec<Album>> {
-    run_randomizer_query(connection, filters, -1)
-}
-
-/// Preserves your original no-filter random function.
+/// Returns a random set of albums across the entire collection without filters.
 pub fn random_album(connection: &mut SqliteConnection, amount: i64) -> QueryResult<Vec<Album>> {
     random_matching(connection, &RandomizerFilters::default(), amount)
-}
-
-/// Preserves your original no-filter shuffle function.
-pub fn shuffle(connection: &mut SqliteConnection) -> QueryResult<Vec<Album>> {
-    shuffle_matching(connection, &RandomizerFilters::default())
 }
 
 fn run_randomizer_query(
     connection: &mut SqliteConnection,
     filters: &RandomizerFilters,
-    amount: i64,
+    limit: Option<i64>,
 ) -> QueryResult<Vec<Album>> {
     // Format dates to ISO strings for reliable SQLite string comparison
     let start_date_str = filters.start_date.map(|d| d.format("%Y-%m-%d").to_string());
     let end_date_str = filters.end_date.map(|d| d.format("%Y-%m-%d").to_string());
+
+    // Use i64::MAX as default if no limit is specified (SQLite treats high values as "no limit")
+    let limit_val = limit.unwrap_or(i64::MAX);
 
     let rows = sql_query(
         r#"
@@ -475,7 +465,7 @@ fn run_randomizer_query(
     .bind::<Nullable<Text>, _>(filters.label_name.clone())
     .bind::<Nullable<Text>, _>(filters.artist_gender.clone())
     .bind::<Nullable<Text>, _>(filters.member_gender.clone())
-    .bind::<BigInt, _>(amount)
+    .bind::<BigInt, _>(limit_val)
     .load::<AlbumRow>(connection)?;
 
     Ok(rows.into_iter().map(Album::from).collect())

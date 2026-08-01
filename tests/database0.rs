@@ -16,7 +16,7 @@ use Rust_Kpop_Semester_Project::idol::{
     insert_idol_name, insert_idol_project_group_membership, insert_idol_subunit_membership,
 };
 use Rust_Kpop_Semester_Project::randomizer::{
-    RandomizerFilters, random_matching, shuffle_matching,
+    random_matching, RandomizerFilters,
 };
 
 // -----------------------------------------------------------------------------
@@ -81,8 +81,8 @@ fn table_count(connection: &mut SqliteConnection, table_name: &str) -> QueryResu
 }
 
 // Complete database0 test
-//Don't ask why this is one test
-//I gave up on life 3 hours ago
+// Don't ask why this is one test
+// I gave up on life 3 hours ago
 
 #[test]
 fn database_zero_is_valid_and_all_operations_work() {
@@ -469,9 +469,9 @@ fn database_zero_is_valid_and_all_operations_work() {
 
         let violations_after_inserts: CountResult = diesel::sql_query(
             "
-                    SELECT COUNT(*) AS count
-                    FROM pragma_foreign_key_check;
-                    ",
+            SELECT COUNT(*) AS count
+            FROM pragma_foreign_key_check;
+            ",
         )
         .get_result(connection)?;
 
@@ -791,66 +791,67 @@ fn database_zero_is_valid_and_all_operations_work() {
         );
 
         // =========================================================================
-        // 6. Test shuffle_matching
+        // 6. Test full matching queries (unlimited / large limit)
         // =========================================================================
 
-        let shuffled_results = shuffle_matching(connection, &RandomizerFilters::default())?;
+        let all_unlimited = random_matching(connection, &RandomizerFilters::default(), i64::MAX)?;
 
         assert!(
-            shuffled_results
+            all_unlimited
                 .iter()
                 .any(|album| { album.title == "Database Zero Group Album" }),
-            "shuffle_matching omitted the group album"
+            "Unlimited query omitted the group album"
         );
 
         assert!(
-            shuffled_results
+            all_unlimited
                 .iter()
                 .any(|album| { album.title == "Database Zero Subunit Album" }),
-            "shuffle_matching omitted the subunit album"
+            "Unlimited query omitted the subunit album"
         );
 
         assert!(
-            shuffled_results
+            all_unlimited
                 .iter()
                 .any(|album| { album.title == "Database Zero Project Album" }),
-            "shuffle_matching omitted the project album"
+            "Unlimited query omitted the project album"
         );
 
         assert!(
-            shuffled_results
+            all_unlimited
                 .iter()
                 .any(|album| { album.title == "Database Zero Solo Album" }),
-            "shuffle_matching omitted the solo album"
+            "Unlimited query omitted the solo album"
         );
 
-        let shuffled_korean = shuffle_matching(
+        let korean_unlimited = random_matching(
             connection,
             &RandomizerFilters {
                 language: Some("Korean".to_string()),
                 ..Default::default()
             },
+            i64::MAX,
         )?;
 
         assert!(
-            shuffled_korean
+            korean_unlimited
                 .iter()
                 .any(|album| { album.title == "Database Zero Group Album" }),
-            "Filtered shuffle omitted the Korean group album"
+            "Filtered unlimited query omitted the Korean group album"
         );
 
         assert!(
-            shuffled_korean
+            korean_unlimited
                 .iter()
                 .any(|album| { album.title == "Database Zero Subunit Album" }),
-            "Filtered shuffle omitted the Korean subunit album"
+            "Filtered unlimited query omitted the Korean subunit album"
         );
 
         assert!(
-            shuffled_korean
+            korean_unlimited
                 .iter()
                 .all(|album| { album.language.as_deref() == Some("Korean") }),
-            "Filtered shuffle returned a non-Korean album"
+            "Filtered unlimited query returned a non-Korean album"
         );
 
         Ok(())
