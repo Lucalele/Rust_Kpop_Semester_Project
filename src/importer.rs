@@ -42,7 +42,7 @@ fn ignore_unique_violation(result: Result<usize, DieselError>) -> Result<(), Box
     match result {
         Ok(_) => Ok(()),
         Err(DieselError::DatabaseError(DatabaseErrorKind::UniqueViolation, _)) => {
-            // Duplicate → silently ignored (A2 behavior)
+            // Duplicate → silently ignored 
             Ok(())
         }
         Err(e) => Err(Box::new(e)),
