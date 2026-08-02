@@ -28,11 +28,6 @@ fn connect_to(configured_path: &str) -> SqliteConnection {
     })
 }
 
-fn configured_tape_deck_path(database_number: u8) -> String {
-    let variable_name = format!("DATABASE_URL{database_number}");
-
-    env::var(&variable_name).unwrap_or_else(|_| format!("src/database{database_number}.sqlite"))
-}
 
 pub fn establish_connection() -> SqliteConnection {
     dotenv().ok();
@@ -43,55 +38,16 @@ pub fn establish_connection() -> SqliteConnection {
     connect_to(&configured_path)
 }
 
-pub fn establish_database_1_connection() -> SqliteConnection {
-    dotenv().ok();
-    connect_to(&configured_tape_deck_path(1))
-}
 
-pub fn establish_database_2_connection() -> SqliteConnection {
-    dotenv().ok();
-    connect_to(&configured_tape_deck_path(2))
-}
-
-pub fn establish_database_3_connection() -> SqliteConnection {
-    dotenv().ok();
-    connect_to(&configured_tape_deck_path(3))
-}
-
-pub fn establish_database_4_connection() -> SqliteConnection {
-    dotenv().ok();
-    connect_to(&configured_tape_deck_path(4))
-}
-
-pub fn establish_database_5_connection() -> SqliteConnection {
-    dotenv().ok();
-    connect_to(&configured_tape_deck_path(5))
-}
-
-pub fn establish_database_6_connection() -> SqliteConnection {
-    dotenv().ok();
-    connect_to(&configured_tape_deck_path(6))
-}
-
-pub fn establish_database_7_connection() -> SqliteConnection {
-    dotenv().ok();
-    connect_to(&configured_tape_deck_path(7))
-}
 
 pub fn establish_selected_connection(database_number: u8) -> SqliteConnection {
     match database_number {
         0 => establish_connection(),
-        1 => establish_database_1_connection(),
-        2 => establish_database_2_connection(),
-        3 => establish_database_3_connection(),
-        4 => establish_database_4_connection(),
-        5 => establish_database_5_connection(),
-        6 => establish_database_6_connection(),
-        7 => establish_database_7_connection(),
-        _ => panic!("Invalid database number: {database_number}. Use 0 through 7."),
+        _ => panic!("Invalid database number: {database_number}. Use 0"),
     }
 }
 
+//yes it does have to do all this
 pub fn initialize_database_zero(connection: &mut SqliteConnection) {
     connection
         .batch_execute(

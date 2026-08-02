@@ -1,6 +1,4 @@
 # Diesel CLI is configured only for the normalized main archive.
-# `src/schema_tapedecks.rs` is intentionally maintained manually because
-# database1.sqlite through database7.sqlite all use the same albums_alt table.
 
 [print_schema]
 file = "src/schema.rs"

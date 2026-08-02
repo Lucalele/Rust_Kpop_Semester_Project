@@ -1,11 +1,41 @@
-Design Philosophy: This application intentionally does not validate K-pop data against external sources. It functions as a user-managed collection database. This allows support for newly debuted artists, independent artists, fictional groups, unreleased projects, and user-defined organizations without requiring database updates.
+If a user encounters anything pertaining to database 1-7, it should be deleted immediately.
 
-This application is optimized for K-pop collections but can be adapted to catalog other artists by leaving K-pop-specific information blank or unused.
+It should all be scrubed, but who knows.
 
-User-Controlled Database Philosophy
+It will corrupt the files if ran.
 
-The application provides database scaffolding but does not require the user to populate it. A completely empty database is a valid state, and the application will continue to open and operate normally.
+Something something u16 to u8 ascii corruption.
 
-Users may add as much or as little information as they choose. Features that depend on unavailable data will not infer or create missing values. Instead, they will stop and explain which data must be entered before that feature can be used.
+It even corrupted in the terminal.
 
-The application assumes that the current contents of the database reflect the user's intent. It does not require the user to maintain data for features they do not intend to use.
+Hence why all tests were also removed.
+
+Diesel apparently is not meant to house two simultaneous schema
+when the person writing the code can barely manage one.
+
+In the event of repository corruption, reclone the repository.
+
+The program can be run with cargo run. 
+
+Do not run it with anything else. 
+
+Just use cargo run.
+
+There is a text file to populate the database.
+
+It will do this automatically.
+
+Do not mess with the file.
+
+Unless you're Professor Kennedy, then do what you want at your own risk.
+
+Add new data by following the code in the importer. 
+
+The importer.rs like database.rs is held together with duct tape and my will to live 
+and likely violates the single responsibilty principle many times over. 
+
+It is not incoherent logically, just very long. 
+
+
+
+
