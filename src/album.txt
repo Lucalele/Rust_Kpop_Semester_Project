@@ -43,9 +43,9 @@ IDOL|Male|true
 IDOLNAME|7|RM
 IDOL|Male|true
 IDOLNAME|8|Hoshi
-IDOL|Female|true
+IDOL|Female|false
 IDOLNAME|9|Chaewon
-IDOL|Female|true
+IDOL|Female|false
 IDOLNAME|10|Hanni
 IDOL|Male|true
 IDOLNAME|11|Heeseung
