@@ -100,7 +100,7 @@ fn prompt_single_filter() -> RandomizerFilters {
     println!(" 4. Company Name");
     println!(" 5. Label Name");
     println!(" 6. Language");
-    println!(" 7. Artist Gender (Female/Male/Co-ed)");
+    println!(" 7. Group Gender (Female/Male/Co-ed)");
     println!(" 8. Idol Gender");
     println!(" 9. Released After Date (YYYY-MM-DD)");
     println!(" 10. Released Before Date (YYYY-MM-DD)");
@@ -119,7 +119,7 @@ fn prompt_single_filter() -> RandomizerFilters {
         4 => filters.company_name = prompt_str("Enter Company Name: "),
         5 => filters.label_name = prompt_str("Enter Label Name: "),
         6 => filters.language = prompt_str("Enter Language: "),
-        7 => filters.artist_gender = prompt_str("Enter Artist Gender: "),
+        7 => filters.artist_gender = prompt_str("Enter Group Gender: "),
         8 => filters.member_gender = prompt_str("Enter Idol Gender: "),
         9 => {
             filters.start_date = prompt_str("Enter Start Date (YYYY-MM-DD): ")
