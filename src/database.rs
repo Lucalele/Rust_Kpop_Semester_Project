@@ -267,5 +267,5 @@ pub fn initialize_all_dbz() {
 
     initialize_database_zero(&mut connection);
 
-    println!("Initialized database{}.sqlite with all tables", 0);
+    //println!("Initialized database{}.sqlite with all tables", 0);
 }
