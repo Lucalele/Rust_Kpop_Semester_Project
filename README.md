@@ -4,6 +4,11 @@ It should all be scrubed, but who knows.
 
 It will corrupt the files if ran.
 
+If diesel print-schema0
+ was ran on database 1-7, diesel would change Interger NOT NULL to Nullable<Intereger>
+
+Then if you cargo run
+
 Something something u16 to u8 ascii corruption.
 
 It even corrupted in the terminal.
