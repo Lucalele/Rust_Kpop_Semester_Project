@@ -17,6 +17,7 @@ use crate::idol::{
     insert_idol_name, insert_idol_project_group_membership, insert_idol_subunit_membership,
 };
 
+//this is for dates
 fn parse_date(value: &str) -> Option<NaiveDate> {
     if value.trim().is_empty() {
         None
@@ -25,6 +26,7 @@ fn parse_date(value: &str) -> Option<NaiveDate> {
     }
 }
 
+//this is for soloists
 fn parse_bool(value: &str) -> Option<bool> {
     match value.trim().to_lowercase().as_str() {
         "true" | "1" | "yes" => Some(true),
@@ -35,6 +37,7 @@ fn parse_bool(value: &str) -> Option<bool> {
 
 /// Treat UNIQUE constraint violations as success (silent skip),
 /// but still propagate all other errors.
+/// This prevents the program from randomly deciding to not work because of data being weird
 fn ignore_unique_violation(result: Result<usize, DieselError>) -> Result<(), Box<dyn Error>> {
     match result {
         Ok(_) => Ok(()),
@@ -46,6 +49,7 @@ fn ignore_unique_violation(result: Result<usize, DieselError>) -> Result<(), Box
     }
 }
 
+
 pub fn import_database_zero(
     connection: &mut SqliteConnection,
     filename: &str,
@@ -56,6 +60,7 @@ pub fn import_database_zero(
     for line in reader.lines() {
         let line = line?;
 
+        //this is leftover from the old format of the text file but I'm too scared to remove this.
         if line.trim().is_empty() || line.starts_with('#') {
             continue;
         }
@@ -69,6 +74,7 @@ pub fn import_database_zero(
                     continue;
                 }
 
+                // Silently ignores duplicates
                 ignore_unique_violation(insert_company(connection, parts[1]))?;
                 println!("Imported COMPANY {}", parts[1]);
             }
@@ -81,6 +87,7 @@ pub fn import_database_zero(
 
                 let company_id: i32 = parts[2].parse()?;
 
+                // Silently ignores duplicates
                 ignore_unique_violation(insert_label(connection, parts[1], company_id))?;
                 println!("Imported LABEL {}", parts[1]);
             }
@@ -91,6 +98,7 @@ pub fn import_database_zero(
                     continue;
                 }
 
+                // Silently ignores duplicates
                 ignore_unique_violation(insert_group(
                     connection,
                     parts[1],
@@ -109,6 +117,7 @@ pub fn import_database_zero(
 
                 let parent_group: i32 = parts[2].parse()?;
 
+                // Silently ignores duplicates
                 ignore_unique_violation(insert_subunit(
                     connection,
                     parts[1],
@@ -126,6 +135,7 @@ pub fn import_database_zero(
                     continue;
                 }
 
+                // Silently ignores duplicates
                 ignore_unique_violation(insert_project_group(
                     connection,
                     parts[1],
@@ -145,6 +155,12 @@ pub fn import_database_zero(
                 let project_group_id: i32 = parts[1].parse()?;
                 let parent_group_id: i32 = parts[2].parse()?;
 
+                //This is to avoid two project groups with the same parent group and ID of being an issue 
+                //if the two Eunbis end up in the same project group
+                //Which they genuinely could
+                //Aka future proofing
+                //But the program would just drop the second entry of Eunbi
+                //Which the User shouldn't be entering them this way since that's not their stage names
                 ignore_unique_violation(insert_project_group_parent(
                     connection,
                     project_group_id,
@@ -163,6 +179,7 @@ pub fn import_database_zero(
                     continue;
                 }
 
+                // Silently ignores duplicates
                 ignore_unique_violation(insert_idol(connection, parts[1], parse_bool(parts[2])))?;
 
                 println!("Imported IDOL");
@@ -176,6 +193,11 @@ pub fn import_database_zero(
 
                 let idol_id: i32 = parts[1].parse()?;
 
+                //This is actually important
+                //In the group Gfriend both members have the actually name Eunbi
+                //One goes by SinB and the other goes by Eunha
+                //But they are both named Eunbi
+                //The program will silently drop the second Eunbi
                 ignore_unique_violation(insert_idol_name(connection, idol_id, parts[2]))?;
                 println!("Added name {} to idol {}", parts[2], idol_id);
             }
@@ -189,6 +211,7 @@ pub fn import_database_zero(
                 let idol_id: i32 = parts[1].parse()?;
                 let group_id: i32 = parts[2].parse()?;
 
+                //Again Eunbi Eunbi situation
                 ignore_unique_violation(insert_idol_group_membership(
                     connection, idol_id, group_id,
                 ))?;
@@ -204,6 +227,8 @@ pub fn import_database_zero(
                 let idol_id: i32 = parts[1].parse()?;
                 let subunit_id: i32 = parts[2].parse()?;
 
+                //Both Eunbis are in Viviz which some fans consider a subunit of Gfriend
+                //So Eunbi dropping
                 ignore_unique_violation(insert_idol_subunit_membership(
                     connection, idol_id, subunit_id,
                 ))?;
@@ -219,6 +244,7 @@ pub fn import_database_zero(
                 let idol_id: i32 = parts[1].parse()?;
                 let project_group_id: i32 = parts[2].parse()?;
 
+                // Silently ignores duplicates
                 ignore_unique_violation(insert_idol_project_group_membership(
                     connection,
                     idol_id,
@@ -240,6 +266,7 @@ pub fn import_database_zero(
                 let idol_id: i32 = parts[1].parse()?;
                 let company_id: i32 = parts[2].parse()?;
 
+                // Silently ignores duplicates
                 ignore_unique_violation(insert_idol_company(connection, idol_id, company_id))?;
                 println!("Linked idol {} to company {}", idol_id, company_id);
             }
@@ -253,6 +280,7 @@ pub fn import_database_zero(
                 let idol_id: i32 = parts[1].parse()?;
                 let label_id: i32 = parts[2].parse()?;
 
+                // Silently ignores duplicates
                 ignore_unique_violation(insert_idol_label(connection, idol_id, label_id))?;
                 println!("Linked idol {} to label {}", idol_id, label_id);
             }
@@ -266,6 +294,7 @@ pub fn import_database_zero(
                 let group_id: i32 = parts[1].parse()?;
                 let company_id: i32 = parts[2].parse()?;
 
+                // Silently ignores duplicates
                 ignore_unique_violation(insert_group_company(connection, group_id, company_id))?;
                 println!("Linked group {} to company {}", group_id, company_id);
             }
@@ -279,6 +308,7 @@ pub fn import_database_zero(
                 let group_id: i32 = parts[1].parse()?;
                 let label_id: i32 = parts[2].parse()?;
 
+                // Silently ignores duplicates
                 ignore_unique_violation(insert_group_label(connection, group_id, label_id))?;
                 println!("Linked group {} to label {}", group_id, label_id);
             }
@@ -303,6 +333,8 @@ pub fn import_database_zero(
                     Some(parts[6])
                 };
 
+                //this is handles two different versions of the same album by dropping them
+                //if a user has multiple of the exact same version of the same album
                 ignore_unique_violation(insert_album(
                     connection,
                     parts[1],
