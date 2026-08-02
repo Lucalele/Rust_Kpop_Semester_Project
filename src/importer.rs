@@ -42,13 +42,12 @@ fn ignore_unique_violation(result: Result<usize, DieselError>) -> Result<(), Box
     match result {
         Ok(_) => Ok(()),
         Err(DieselError::DatabaseError(DatabaseErrorKind::UniqueViolation, _)) => {
-            // Duplicate → silently ignored 
+            // Duplicate → silently ignored
             Ok(())
         }
         Err(e) => Err(Box::new(e)),
     }
 }
-
 
 pub fn import_database_zero(
     connection: &mut SqliteConnection,
@@ -155,7 +154,7 @@ pub fn import_database_zero(
                 let project_group_id: i32 = parts[1].parse()?;
                 let parent_group_id: i32 = parts[2].parse()?;
 
-                //This is to avoid two project groups with the same parent group and ID of being an issue 
+                //This is to avoid two project groups with the same parent group and ID of being an issue
                 //if the two Eunbis end up in the same project group
                 //Which they genuinely could
                 //Aka future proofing

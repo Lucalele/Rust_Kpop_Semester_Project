@@ -86,7 +86,7 @@ fn run_cli_menu(conn: &mut SqliteConnection) {
                 break;
             }
             //As much as I hate erroring I did not want to make exiting the default or running the deafult as both could cause problems
-            _ => println!("Invalid selection, please try again."), 
+            _ => println!("Invalid selection, please try again."),
         }
     }
 }
@@ -114,7 +114,7 @@ fn prompt_single_filter() -> RandomizerFilters {
 
     match selection {
         1 => filters.artist_name = prompt_str("Enter Artist Name: "),
-        2 => filters.artist_type = prompt_str("Enter Artist Type: "), 
+        2 => filters.artist_type = prompt_str("Enter Artist Type: "),
         3 => filters.member_name = prompt_str("Enter Member Name: "),
         4 => filters.company_name = prompt_str("Enter Company Name: "),
         5 => filters.label_name = prompt_str("Enter Label Name: "),
@@ -129,9 +129,9 @@ fn prompt_single_filter() -> RandomizerFilters {
             filters.end_date = prompt_str("Enter End Date (YYYY-MM-DD): ")
                 .and_then(|s| chrono::NaiveDate::parse_from_str(&s, "%Y-%m-%d").ok());
         }
-        //option 11 
+        //option 11
         //or if anything other than a valid input is entered even if it's not an int
-        //If you're putting something not completely stupid like no for no filter 
+        //If you're putting something not completely stupid like no for no filter
         //but I didn't want to check for no specifically
         //I don't want this thing to error out
         //So anything that is over 11 or not an int defaults here
@@ -140,8 +140,6 @@ fn prompt_single_filter() -> RandomizerFilters {
 
     filters
 }
-
-
 
 fn prompt_str(label: &str) -> Option<String> {
     print!("{}", label);
@@ -156,7 +154,7 @@ fn prompt_str(label: &str) -> Option<String> {
     None
 }
 
-//only happens if a user enters 0 
+//only happens if a user enters 0
 //otherwise a garbage entry is treated as 1
 //I don't like when programs give you an error instead of just powering through
 fn display_results(albums: &[Rust_Kpop_Semester_Project::album::Album]) {

@@ -28,7 +28,6 @@ fn connect_to(configured_path: &str) -> SqliteConnection {
     })
 }
 
-
 pub fn establish_connection() -> SqliteConnection {
     dotenv().ok();
 
@@ -37,8 +36,6 @@ pub fn establish_connection() -> SqliteConnection {
 
     connect_to(&configured_path)
 }
-
-
 
 pub fn establish_selected_connection(database_number: u8) -> SqliteConnection {
     match database_number {

@@ -452,7 +452,7 @@ fn run_randomizer_query(
         LIMIT ?
         "#,
     )
-    .bind::<Nullable<Text>, _>(filters.title.clone()) 
+    .bind::<Nullable<Text>, _>(filters.title.clone())
     .bind::<Nullable<diesel::sql_types::Integer>, _>(filters.artist_id)
     .bind::<Nullable<Text>, _>(filters.artist_type.clone())
     .bind::<Nullable<Text>, _>(start_date_str)

@@ -22,7 +22,7 @@ In the event of repository corruption, reclone the repository.
 
 The program can be run with cargo run. 
 
-Do not run it with anything else. 
+Do not run it with anything else except cargo run --release which does work. 
 
 Just use cargo run.
 
