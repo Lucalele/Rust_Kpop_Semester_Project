@@ -13,13 +13,13 @@ use crate::album::Album;
 #[derive(Debug, Default)]
 pub struct RandomizerFilters {
     // Direct album filters
-    pub title: Option<String>,
+    pub title: Option<String>, //goes unused because I realized that made no sense but I fear deleting it
     pub artist_id: Option<i32>,
     pub artist_type: Option<String>,
     pub start_date: Option<NaiveDate>,
     pub end_date: Option<NaiveDate>,
     pub language: Option<String>,
-    pub version: Option<String>,
+    pub version: Option<String>, //goes unused because I realized that made no sense but I fear deleting it
 
     // Artist and relationship filters
     pub artist_name: Option<String>,
@@ -101,7 +101,7 @@ fn run_randomizer_query(
         r#"
         WITH filter_values AS (
             SELECT
-                ? AS title_filter,
+                ? AS title_filter, 
                 ? AS artist_id_filter,
                 ? AS artist_type_filter,
                 ? AS start_date_filter,
@@ -452,7 +452,7 @@ fn run_randomizer_query(
         LIMIT ?
         "#,
     )
-    .bind::<Nullable<Text>, _>(filters.title.clone())
+    .bind::<Nullable<Text>, _>(filters.title.clone()) 
     .bind::<Nullable<diesel::sql_types::Integer>, _>(filters.artist_id)
     .bind::<Nullable<Text>, _>(filters.artist_type.clone())
     .bind::<Nullable<Text>, _>(start_date_str)

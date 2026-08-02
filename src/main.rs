@@ -85,60 +85,63 @@ fn run_cli_menu(conn: &mut SqliteConnection) {
                 println!("Exiting K-Pop Archive. Goodbye!");
                 break;
             }
-            _ => println!("Invalid selection, please try again."),
+            //As much as I hate erroring I did not want to make exiting the default or running the deafult as both could cause problems
+            _ => println!("Invalid selection, please try again."), 
         }
     }
 }
 
 /// Prompt user to pick EXACTLY ONE filter category
 fn prompt_single_filter() -> RandomizerFilters {
-    println!("\n--- Choose ONE filter category ---");
-    println!(" 1. Album Title");
-    println!(" 2. Artist / Group Name");
-    println!(" 3. Artist Type (Group/Soloist/Subunit/ProjectGroup)");
-    println!(" 4. Member Name");
-    println!(" 5. Company Name");
-    println!(" 6. Label Name");
-    println!(" 7. Language");
-    println!(" 8. Version");
-    println!(" 9. Artist Gender (Female/Male/Co-ed)");
-    println!("10. Member Gender (Female/Male)");
-    println!("11. Released After Date (YYYY-MM-DD)");
-    println!("12. Released Before Date (YYYY-MM-DD)");
-    println!("13. No Filter (Random across all records)");
+    println!("\n--- Choose ONE filter category ---"); //I did not want to layer filters as that would be a mess
+    println!(" 1. Artist / Group Name");
+    println!(" 2. Artist Type (Group/Soloist/Subunit/ProjectGroup)");
+    println!(" 3. Idol Name");
+    println!(" 4. Company Name");
+    println!(" 5. Label Name");
+    println!(" 6. Language");
+    println!(" 7. Artist Gender (Female/Male/Co-ed)");
+    println!(" 8. Idol Gender");
+    println!(" 9. Released After Date (YYYY-MM-DD)");
+    println!(" 10. Released Before Date (YYYY-MM-DD)");
+    println!(" 11. No Filter (Random across all records)");
 
-    let selection = prompt_str("\nSelect filter choice (1-13): ")
+    let selection = prompt_str("\nSelect filter choice (1-11): ")
         .and_then(|s| s.parse::<u8>().ok())
-        .unwrap_or(13);
+        .unwrap_or(11);
 
     let mut filters = RandomizerFilters::default();
 
     match selection {
-        1 => filters.title = prompt_str("Enter Album Title: "),
-        2 => filters.artist_name = prompt_str("Enter Artist/Group Name: "),
-        3 => filters.artist_type = prompt_str("Enter Artist Type: "),
-        4 => filters.member_name = prompt_str("Enter Member Name: "),
-        5 => filters.company_name = prompt_str("Enter Company Name: "),
-        6 => filters.label_name = prompt_str("Enter Label Name: "),
-        7 => filters.language = prompt_str("Enter Language: "),
-        8 => filters.version = prompt_str("Enter Version: "),
-        9 => filters.artist_gender = prompt_str("Enter Artist Gender: "),
-        10 => filters.member_gender = prompt_str("Enter Member Gender: "),
-        11 => {
+        1 => filters.artist_name = prompt_str("Enter Artist Name: "),
+        2 => filters.artist_type = prompt_str("Enter Artist Type: "), 
+        3 => filters.member_name = prompt_str("Enter Member Name: "),
+        4 => filters.company_name = prompt_str("Enter Company Name: "),
+        5 => filters.label_name = prompt_str("Enter Label Name: "),
+        6 => filters.language = prompt_str("Enter Language: "),
+        7 => filters.artist_gender = prompt_str("Enter Artist Gender: "),
+        8 => filters.member_gender = prompt_str("Enter Idol Gender: "),
+        9 => {
             filters.start_date = prompt_str("Enter Start Date (YYYY-MM-DD): ")
                 .and_then(|s| chrono::NaiveDate::parse_from_str(&s, "%Y-%m-%d").ok());
         }
-        12 => {
+        10 => {
             filters.end_date = prompt_str("Enter End Date (YYYY-MM-DD): ")
                 .and_then(|s| chrono::NaiveDate::parse_from_str(&s, "%Y-%m-%d").ok());
         }
+        //option 11 
+        //or if anything other than a valid input is entered even if it's not an int
+        //If you're putting something not completely stupid like no for no filter 
+        //but I didn't want to check for no specifically
+        //I don't want this thing to error out
+        //So anything that is over 11 or not an int defaults here
         _ => println!("No filter selected."),
     }
 
     filters
 }
 
-// --- HELPER FUNCTIONS ---
+
 
 fn prompt_str(label: &str) -> Option<String> {
     print!("{}", label);
@@ -153,13 +156,16 @@ fn prompt_str(label: &str) -> Option<String> {
     None
 }
 
+//only happens if a user enters 0 
+//otherwise a garbage entry is treated as 1
+//I don't like when programs give you an error instead of just powering through
 fn display_results(albums: &[Rust_Kpop_Semester_Project::album::Album]) {
     if albums.is_empty() {
-        println!("\n❌ No matching albums found!");
+        println!("\n No matching albums found!");
         return;
     }
 
-    println!("\n🎲 Found {} result(s):", albums.len());
+    println!("\n Found {} result(s):", albums.len());
     println!("{:-<65}", "");
     for (idx, album) in albums.iter().enumerate() {
         println!(

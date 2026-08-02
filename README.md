@@ -4,8 +4,8 @@ It should all be scrubed, but who knows.
 
 It will corrupt the files if ran.
 
-If diesel print-schema0
- was ran on database 1-7, diesel would change Interger NOT NULL to Nullable Intereger
+If diesel print-schema0 was ran on database 1-7,
+diesel would change Interger NOT NULL to Nullable Intereger
 
 Then if you cargo run
 
@@ -34,10 +34,9 @@ Do not mess with the file.
 
 Unless you're Professor Kennedy, then do what you want at your own risk.
 
-Add new data by following the code in the importer. 
+Add new data by following the code pattern in the importer. 
 
-The importer.rs like database.rs is held together with duct tape and my will to live 
-and likely violates the single responsibilty principle many times over. 
+The importer.rs like database.rs is held together with duct tape and my will to live.
 
 It is not incoherent logically, just very long. 
 
