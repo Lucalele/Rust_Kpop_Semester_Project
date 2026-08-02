@@ -115,7 +115,7 @@ fn prompt_single_filter() -> RandomizerFilters {
     match selection {
         1 => filters.artist_name = prompt_str("Enter Artist Name: "),
         2 => filters.artist_type = prompt_str("Enter Artist Type: "),
-        3 => filters.member_name = prompt_str("Enter Member Name: "),
+        3 => filters.member_name = prompt_str("Enter Idol Name: "),
         4 => filters.company_name = prompt_str("Enter Company Name: "),
         5 => filters.label_name = prompt_str("Enter Label Name: "),
         6 => filters.language = prompt_str("Enter Language: "),
