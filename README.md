@@ -41,5 +41,14 @@ The importer.rs like database.rs is held together with duct tape and my will to 
 It is not incoherent logically, just very long. 
 
 
+Dependencies
+chrono = "0.4.45"
+csv = "1.4.0" //unused but wanted for future when I keep working on this
+diesel = { version = "2.3.10", features = ["sqlite", "chrono"] }
+libsqlite3-sys = { version = "0.37", features = ["bundled"] }
+dotenv = "0.15.0"
+rand = "0.8" // 
+serde = "1.0.229" 
+
 
 
