@@ -262,6 +262,7 @@ pub fn initialize_database_zero(connection: &mut SqliteConnection) {
         .expect("Could not initialize database zero");
 }
 
+//dbz means database 0
 pub fn initialize_all_dbz() {
     let mut connection = establish_selected_connection(0);
 
